@@ -1,6 +1,10 @@
+server:
+  port: 8081
+eureka:
+  client:
+    instance:
+      prefer-ip-address: true
 spring:
   data:
     mongodb:
       uri: mongodb://admin:admin@localhost:27017/customer?authSource=admin
-server:
-  port: 8090

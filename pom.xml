@@ -24,8 +24,9 @@
 
     <modules>
         <module>services/config-server</module>
-        <module>services/discovery-service</module>
-        <module>services/common-service</module>
+        <module>services/discovery-server</module>
+        <module>services/api-gateway</module>
+        <module>services/common-module</module>
         <module>services/customer-service</module>
     </modules>
 
