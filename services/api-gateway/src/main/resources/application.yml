@@ -1,5 +1,56 @@
+server:
+  port: 8080
+  ssl:
+    enabled: false
 spring:
   application:
     name: api-gateway
-  config:
-    import: optional:configserver:http://localhost:8888
+  webflux:
+    cors:
+      allowed-origins: "http://localhost:4200"
+      allowed-methods: "*"
+      allowed-headers: "*"
+      allow-credentials: true
+  cloud:
+    gateway:
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      default-filters:
+        - TokenRelay=
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: customer-service
+          uri: lb:http://customer-service
+          predicates:
+            - Path=/api/v1/customer/**
+          filters:
+            - RewritePath=/api/v1/(?<segment>.*), /$\{segment}
+    config:
+      enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9080/realms/ecommerce-app/protocol/openid-connect/certs
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:9080/realms/ecommerce-app
+        registration:
+          keycloak:
+            provider: keycloak
+            client-id: cloud-gateway
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8080/auth/callback"
+            scope: openid
+logging:
+  level:
+    org.springframework.security.oauth2: TRACE
+    org.springframework.web.client.RestTemplate: TRACE

@@ -1,8 +1,8 @@
 name: ecommerce-app
 services:
-  postgresql:
-    container_name: ms_pg_sql
-    image: postgres
+  postgres:
+    container_name: postgres
+    image: postgres:17
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
@@ -74,25 +74,32 @@ services:
       - microservices-net
       
   keycloak:
-    image: quay.io/keycloak/keycloak:26.1.1
-    command: 'start-dev --import-realm'
+    container_name: keycloak
+    image: quay.io/keycloak/keycloak:22.0.5
+    command:
+      - start-dev
+      - --https-certificate-file=/etc/x509/https/tls.crt
+      - --https-certificate-key-file=/etc/x509/https/tls.key
     volumes:
       - ./realm-config:/opt/keycloak/data/import
       - ./realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
+      - ./keycloak-certs1/keycloak.crt:/etc/x509/https/tls.crt
+      - ./keycloak-certs1/keycloak.key:/etc/x509/https/tls.key
     environment:
-      - KC_DB=dev-file
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KC_FEATURES=scripts
       - KC_HTTP_PORT=9080
-      - KC_HTTPS_PORT=9443
-      - KC_HEALTH_ENABLED=true
+      - KC_HTTPS_PORT=8443
       - KC_HTTP_MANAGEMENT_PORT=9990
+      - KC_DB=postgres            
+      - KC_DB_URL=jdbc:postgresql://postgres/keycloak           
+      - KC_DB_USERNAME=admin          
+      - KC_DB_PASSWORD=admin
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
       - 9080:9080
-      - 9443:9443
+      - 8443:8443
     healthcheck:
       test: 'bash /opt/keycloak/health-check.sh'
       interval: 5s
@@ -102,6 +109,10 @@ services:
       start_period: 10s
     labels:
       org.springframework.boot.ignore: true
+    networks:
+      - microservices-net
+      
+  
 
   mail-dev:
     container_name: ms-mail-dev
