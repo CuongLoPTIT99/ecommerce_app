@@ -1,5 +1,6 @@
 package com.microservice.apigateway.service;
 
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -21,6 +22,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class OAuth2Service {
@@ -68,58 +70,98 @@ public class OAuth2Service {
                     // Retrieve the code verifier from the cookie
                     HttpCookie codeVerifier = exchange.getRequest().getCookies().getFirst("code_verifier");
 
-                    MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-                    formData.add("grant_type", clientRegistration.getAuthorizationGrantType().getValue());
-                    formData.add("client_id", clientRegistration.getClientId());
-                    formData.add("code", code);
-                    formData.add("redirect_uri", clientRegistration.getRedirectUri()); // Change to your redirect URI
-                    if (codeVerifier != null) formData.add("code_verifier", codeVerifier.getValue());
-
                     return this.webClient.post()
                             .uri(clientRegistration.getProviderDetails()
                                     .getConfigurationMetadata()
                                     .get("token_endpoint").toString())  // External API endpoint
                             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                            .body(BodyInserters.fromFormData(formData))
+                            .body(BodyInserters.fromFormData("grant_type", clientRegistration.getAuthorizationGrantType().getValue())
+                                    .with("client_id", clientRegistration.getClientId())
+                                    .with("code", code)
+                                    .with("redirect_uri", clientRegistration.getRedirectUri())
+                                    .with("code_verifier", codeVerifier != null ? codeVerifier.getValue() : ""))
                             .retrieve()
-                            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                            .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {
+                            })
                             .flatMap(response -> {
                                 Map<String, Object> responseBody = response;
                                 String accessToken = responseBody.get("access_token").toString();
                                 String refreshToken = responseBody.get("refresh_token").toString();
 
                                 // Remove the code verifier in cookie
-                                ResponseCookie expiredCookie = ResponseCookie.from("code_verifier", "")
-                                        .path("/")
-                                        .httpOnly(true)
-                                        .secure(false)
-                                        .maxAge(0)
-                                        .build();
-                                exchange.getResponse().addCookie(expiredCookie);
+                                removeCookiesByName(exchange.getResponse(), "code_verifier");
 
-                                // Store the access token in an HTTP-only cookie
-                                ResponseCookie cookie = ResponseCookie.from("access_token", accessToken)
-                                        .httpOnly(true)
-                                        .secure(false)
-                                        .path("/")
-                                        .sameSite("Strict")
-                                        .build();
-                                exchange.getResponse().addCookie(cookie);
-
-                                // Store the refresh token in an HTTP-only cookie
-//                                cookie = ResponseCookie.from("refresh_token", refreshToken)
-//                                        .httpOnly(true)
-//                                        .secure(false)
-//                                        .path("/")
-//                                        .sameSite("Strict")
-//                                        .build();
-//                                exchange.getResponse().addCookie(cookie);
+                                updateTokenCookies(exchange.getResponse(), accessToken, refreshToken);
 
                                 exchange.getResponse().setStatusCode(HttpStatus.FOUND);
                                 exchange.getResponse().getHeaders().setLocation(URI.create("http://localhost:4200/home"));
                                 return exchange.getResponse().setComplete();
                             });
                 });
+    }
+
+    public Mono<Void> refreshAccessToken(String refreshToken, ServerWebExchange exchange) {
+        return clientRegistrationRepository.findByRegistrationId("keycloak")
+                .flatMap(clientRegistration ->
+                    webClient.post()
+                            .uri(clientRegistration.getProviderDetails()
+                                    .getConfigurationMetadata()
+                                    .get("token_endpoint").toString())
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                            .body(BodyInserters.fromFormData("grant_type", "refresh_token")
+                                    .with("client_id", clientRegistration.getClientId())
+                                    .with("refresh_token", refreshToken))
+                            .retrieve()
+                            .bodyToMono(Map.class)
+                            .flatMap(response -> {
+                                String newAccessToken = (String) response.get("access_token");
+                                String newRefreshToken = (String) response.get("refresh_token");
+
+                                // Update cookies with new tokens
+                                updateTokenCookies(exchange.getResponse(), newAccessToken, newRefreshToken);
+                                exchange.getResponse().setStatusCode(HttpStatus.OK);
+                                return exchange.getResponse().setComplete();
+                            })
+                            .onErrorResume(Exception.class, ex -> {
+                                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                                return exchange.getResponse().setComplete();
+                            })
+                );
+    }
+
+    public Mono<Void> logout(ServerWebExchange exchange) {
+        HttpCookie refreshTokenCookie = exchange.getRequest().getCookies().getFirst("refresh_token");
+        if (Objects.nonNull(refreshTokenCookie)) {
+            String refreshToken = refreshTokenCookie.getValue();
+            return clientRegistrationRepository.findByRegistrationId("keycloak")
+                    .flatMap(clientRegistration ->
+                                    webClient.post()
+                                            .uri(clientRegistration.getProviderDetails()
+                                                    .getConfigurationMetadata()
+                                                    .get("end_session_endpoint").toString())
+                                            .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                                            .body(BodyInserters.fromFormData("client_id", clientRegistration.getClientId())
+                                                    .with("refresh_token", refreshToken)
+//                                                    .with("redirect_uri", "http://localhost:8080/auth/login")
+                                            )
+                                            .retrieve()
+                                            .toBodilessEntity()
+                                            .flatMap(response -> {
+                                                // Remove token in cookies
+                                                removeCookiesByName(exchange.getResponse(), "access_token");
+                                                removeCookiesByName(exchange.getResponse(), "refresh_token");
+
+                                                exchange.getResponse().setStatusCode(HttpStatus.OK);
+                                                return exchange.getResponse().setComplete();
+                                            })
+                    );
+        } else {
+            exchange.getResponse().setStatusCode(HttpStatus.BAD_REQUEST);
+            exchange.getResponse().writeWith(Mono.just(exchange.getResponse()
+                    .bufferFactory()
+                    .wrap("Invalid credential: Refresh token not found".getBytes())));
+            return exchange.getResponse().setComplete();
+        }
     }
 
     private String generateCodeVerifier() {
@@ -136,5 +178,32 @@ public class OAuth2Service {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("Error generating PKCE challenge", e);
         }
+    }
+
+    private void updateTokenCookies(ServerHttpResponse response, String accessToken, String refreshToken) {
+        ResponseCookie cookie = ResponseCookie.from("access_token", accessToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Strict")
+                .build();
+        response.addCookie(cookie);
+        cookie = ResponseCookie.from("refresh_token", refreshToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .sameSite("Strict")
+                .build();
+        response.addCookie(cookie);
+    }
+
+    private void removeCookiesByName(ServerHttpResponse response, String cookieName) {
+        ResponseCookie expiredCookie = ResponseCookie.from(cookieName, "")
+                .path("/")
+                .httpOnly(true)
+                .secure(false)
+                .maxAge(0)
+                .build();
+        response.addCookie(expiredCookie);
     }
 }

@@ -1,5 +1,6 @@
 package com.microservice.apigateway.security;
 
+import com.microservice.apigateway.service.OAuth2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,8 +33,10 @@ import org.springframework.security.oauth2.server.resource.authentication.*;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.server.resource.web.server.authentication.ServerBearerTokenAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.*;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -56,6 +59,8 @@ import java.util.Objects;
 @EnableWebFluxSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final OAuth2Service oAuth2Service;
 
 //    @Bean
 //    public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) throws Exception {
@@ -111,21 +116,25 @@ public class SecurityConfig {
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
                         .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                        .pathMatchers("/auth/login", "/oauth2/**", "/auth/callback").permitAll()
+                        .pathMatchers("/auth/login", "/auth/callback", "/auth/logout").permitAll()
                         .anyExchange().authenticated()
                 )
 //                .oauth2Login(Customizer.withDefaults())
 //                .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
 //                .oauth2Client(Customizer.withDefaults())
+//                .logout(Customizer.withDefaults())
+//                .logout(config -> config.
+//                        logoutUrl("/auth/logout")
+////                        .logoutHandler(logoutHandler())
+//                )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
                                 .jwtAuthenticationConverter(
                                         new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter()
                                         )
                                 )
-
                         ).bearerTokenConverter(bearerTokenConverter())
-//                                .authenticationManagerResolver(authenticationManagerResolver -> authenticationManagerResolver
+//                                .authenticatioonfolver -> authenticationManagerResolver
 //                                        .authenticationManager(authentication -> {
 //                                            OAuth2AuthenticationToken token = (OAuth2AuthenticationToken) authentication;
 //                                            return authorizedClientManager.authorize(
@@ -152,31 +161,17 @@ public class SecurityConfig {
                                     webFilterExchange.getResponse().getHeaders().add("Location", "/oauth2/authorization/keycloak");
                                     return webFilterExchange.getResponse().setComplete();
                                 })
-//                        .authenticationFailureHandler((webFilterExchange, exception) -> {
-//                            System.out.println("Authentication failed");
-//
-//                            webFilterExchange.getExchange().getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-//
-//                            // Store the access token in an HTTP-only cookie
-//                            ResponseCookie cookie = ResponseCookie.from("access_token", "")
-//                                    .path("/")
-//                                    .httpOnly(true)
-//                                    .secure(false)
-//                                    .maxAge(0)
-//                                    .build();
-//                            webFilterExchange.getExchange().getResponse().addCookie(cookie);
-//
-//                            // Store the refresh token in an HTTP-only cookie
-//                            cookie = ResponseCookie.from("refresh_token", "")
-//                                    .path("/")
-//                                    .httpOnly(true)
-//                                    .secure(false)
-//                                    .maxAge(0)
-//                                    .build();
-//                            webFilterExchange.getExchange().getResponse().addCookie(cookie);
-//
-//                            return webFilterExchange.getExchange().getResponse().setComplete();
-//                        })
+                        .authenticationFailureHandler((webFilterExchange, exception) -> {
+                            HttpCookie refreshTokenCookie = webFilterExchange.getExchange().getRequest().getCookies().getFirst("refresh_token");
+                            if (Objects.nonNull(refreshTokenCookie)) {
+                                String refreshToken = refreshTokenCookie.getValue();
+                                return oAuth2Service.refreshAccessToken(refreshToken, webFilterExchange.getExchange());
+                            } else {
+                                webFilterExchange.getExchange().getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                            }
+
+                            return webFilterExchange.getExchange().getResponse().setComplete();
+                        })
                 )
 //                .addFilterAfter(getOAuth2WebFilter(), SecurityWebFiltersOrder.AUTHENTICATION);
         ;
@@ -187,11 +182,24 @@ public class SecurityConfig {
     public ServerAuthenticationConverter bearerTokenConverter() {
         return exchange -> {
             String pathReq = exchange.getRequest().getPath().value();
-            if (pathReq.startsWith("/auth") && !pathReq.contains("status")) return Mono.empty();
+            if (pathReq.equals("/auth/login") || pathReq.equals("/auth/callback") || pathReq.equals("/auth/logout")) return Mono.empty();
             return Mono.justOrEmpty(exchange.getRequest().getCookies().getOrDefault("access_token", null))
                     .map(cookie -> new BearerTokenAuthenticationToken(!Objects.isNull(cookie) ? cookie.get(0).getValue() : ""));
         };
     }
+
+//    public ServerLogoutHandler logoutHandler() {
+//        return (filterExchange, authentication) -> {
+//            HttpCookie refreshTokenCookie = filterExchange.getExchange().getRequest().getCookies().getFirst("refresh_token");
+//            if (Objects.nonNull(refreshTokenCookie)) {
+//                String refreshToken = refreshTokenCookie.getValue();
+//                return oAuth2Service.logout(refreshToken, filterExchange.getExchange());
+//            } else {
+//                filterExchange.getExchange().getResponse().setStatusCode(HttpStatus.NOT_ACCEPTABLE);
+//                return filterExchange.getExchange().getResponse().setComplete();
+//            }
+//        };
+//    }
 
 //    public AuthenticationWebFilter getOAuth2WebFilter() {
 //        AuthenticationWebFilter filter = new AuthenticationWebFilter(

@@ -11,7 +11,6 @@ import {CallbackComponent} from "./components/callback/callback.component";
 // Define routes
 export const routes: Routes = [
   { path: 'home', component: HomeComponent, title: 'Home' , canActivate: [AuthGuard]},
-  { path: 'callback', component: CallbackComponent, title: 'Callback' },
   // { path: 'about', component: AboutComponent, title: 'About Us' },
   // { path: 'contact', component: ContactComponent, title: 'Contact Us' },
   // {

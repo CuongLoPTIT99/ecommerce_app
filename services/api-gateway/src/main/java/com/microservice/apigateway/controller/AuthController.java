@@ -25,6 +25,11 @@ public class AuthController {
         return oAuth2Service.exchangeCode4Token(exchange, params.getFirst("code"));
     }
 
+    @PostMapping("/logout")
+    public Mono<Void> logout(ServerWebExchange exchange) {
+        return oAuth2Service.logout(exchange);
+    }
+
 
 //    @GetMapping("/access-token")
 //    public Mono<ResponseEntity<?>> getToken(OAuth2AuthenticationToken authentication,

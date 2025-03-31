@@ -12,6 +12,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       if (error.status === HttpStatusCode.Unauthorized) {
+        console.error('401');
         authService.login(); // Redirect to login page
       } else if (error.status === HttpStatusCode.Forbidden) {
         console.error('Access denied');

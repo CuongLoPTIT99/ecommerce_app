@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {OidcSecurityService} from "angular-auth-oidc-client";
 import {catchError, map, Observable, tap} from "rxjs";
-import {HttpClient, HttpErrorResponse, HttpStatusCode} from "@angular/common/http";
+import {HttpClient, HttpErrorResponse, HttpResponse, HttpStatusCode} from "@angular/common/http";
 import {environment} from "../../environments/environment";
 
 @Injectable({
@@ -52,6 +52,22 @@ export class AuthService {
           //'Access-Control-Allow-Origin': 'http://localhost:4200',
         }
       }
+    );
+  }
+
+  logout(): Observable<HttpResponse<any>> {
+    return this.http.post<any>(`${environment.apiGatewayUrl}/auth/logout`, {},
+      {
+        observe: 'response',
+        withCredentials: true,
+      }
+    ).pipe(
+      tap(response => {
+        if (response.status === HttpStatusCode.Ok) {
+          // Redirect to the login page
+          this.login();
+        }
+      })
     );
   }
 
