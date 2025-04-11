@@ -5,21 +5,8 @@ server:
 spring:
   application:
     name: api-gateway
-  webflux:
-    cors:
-      allowed-origins: "http://localhost:4200"
-      allowed-methods: "*"
-      allowed-headers: "*"
-      allow-credentials: true
   cloud:
     gateway:
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "http://localhost:4200"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-            allowCredentials: true
       default-filters:
         - TokenRelay=
       discovery:
@@ -47,10 +34,17 @@ spring:
           keycloak:
             provider: keycloak
             client-id: cloud-gateway
+            client-secret: nnSi2ZoKHZO2k31flZvRZVS74LPi8595
             authorization-grant-type: authorization_code
             redirect-uri: "http://localhost:8080/auth/callback"
             scope: openid
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: admin
 logging:
   level:
     org.springframework.security.oauth2: TRACE
     org.springframework.web.client.RestTemplate: TRACE
+    org.springframework.data.redis: DEBUG

@@ -44,13 +44,9 @@ export class AuthService {
   }
 
   checkLoginStatus(): Observable<any> {
-    return this.http.get(`${environment.apiGatewayUrl}/auth/status`,
+    return this.http.post(`${environment.apiGatewayUrl}/api/v1/customer/token`, {},
       {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-          //'Access-Control-Allow-Origin': 'http://localhost:4200',
-        }
+        withCredentials: true
       }
     );
   }
@@ -69,6 +65,17 @@ export class AuthService {
         }
       })
     );
+  }
+
+  getUserInfo(): any {
+    this.http.get(`${environment.apiGatewayUrl}/auth/userinfo`,
+      {
+        withCredentials: true,
+      }
+    ).subscribe((res) => {
+      console.log(res);
+      return res;
+    });
   }
 
   checkLoginStatus1(): Observable<any> {

@@ -75,45 +75,62 @@ services:
       
   keycloak:
     container_name: keycloak
-    image: quay.io/keycloak/keycloak:22.0.5
+    image: quay.io/keycloak/keycloak:26.1.1
     command:
       - start-dev
       - --https-certificate-file=/etc/x509/https/tls.crt
       - --https-certificate-key-file=/etc/x509/https/tls.key
     volumes:
-      - ./realm-config:/opt/keycloak/data/import
-      - ./realm-config/keycloak-health-check.sh:/opt/keycloak/health-check.sh
       - ./keycloak-certs1/keycloak.crt:/etc/x509/https/tls.crt
       - ./keycloak-certs1/keycloak.key:/etc/x509/https/tls.key
+      - ./keycloak/realm-export.json:/opt/keycloak/data/import/realm-export.json
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=admin
-      - KC_HTTP_PORT=9080
-      - KC_HTTPS_PORT=8443
-      - KC_HTTP_MANAGEMENT_PORT=9990
-      - KC_DB=postgres            
-      - KC_DB_URL=jdbc:postgresql://postgres/keycloak           
-      - KC_DB_USERNAME=admin          
-      - KC_DB_PASSWORD=admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 9080
+      KC_HTTPS_PORT: 8443
+      KC_HTTP_MANAGEMENT_PORT: 9990
+      KC_DB: postgres            
+      KC_DB_URL: jdbc:postgresql://postgres/keycloak           
+      KC_DB_USERNAME: admin          
+      KC_DB_PASSWORD: admin
     # If you want to expose these ports outside your dev PC,
     # remove the "127.0.0.1:" prefix
     ports:
       - 9080:9080
       - 8443:8443
-    healthcheck:
-      test: 'bash /opt/keycloak/health-check.sh'
-      interval: 5s
-      timeout: 5s
-      # Increased retries due to slow Keycloak startup in GitHub Actions using MacOS
-      retries: 50
-      start_period: 10s
-    labels:
-      org.springframework.boot.ignore: true
+    networks:
+      - microservices-net
+      
+  redis:
+    image: redis:7.4.2
+    container_name: redis
+    command: ["redis-server","/usr/local/etc/redis/redis.conf"]
+    restart: always
+    volumes: 
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    networks:
+      - microservices-net
+      
+  redisinsight:
+    image: redis/redisinsight:2.68
+    container_name: redisinsight
+    restart: always
+    volumes: 
+      - redis_insight_data:/db
+    ports:
+      - "5540:5540"
+    depends_on:
+      - redis
     networks:
       - microservices-net
       
   
-
+      
+  
   mail-dev:
     container_name: ms-mail-dev
     image: maildev/maildev
@@ -129,3 +146,5 @@ volumes:
   postgres:
   pgadmin:
   mongo:
+  redis_data:
+  redis_insight_data:
