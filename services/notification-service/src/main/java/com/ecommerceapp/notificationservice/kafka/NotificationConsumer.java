@@ -14,16 +14,10 @@ import org.springframework.stereotype.Component;
 public class NotificationConsumer {
     private final NotificationService notificationService;
 
-//    @KafkaListener(topics = "notification2", groupId = "notification-group")
-//    public void receiveNotification(NotificationMessageDTO messageJson) {
-////        NotificationMessageDTO message = gson.fromJson(messageJson.toString(), NotificationMessageDTO.class);
-//        NotificationMessage notificationMessage = new NotificationMessage();
-//        BeanUtils.copyProperties(messageJson, notificationMessage);
-//        notificationService.sendNotification(notificationMessage);
-//    }
-
-    @KafkaListener(topics = "notification3")
-    public void receiveNotification(String messageJson) {
-        System.out.println("Received message: " + messageJson);
+    @KafkaListener(topics = "notification", groupId = "notification-group")
+    public void receiveNotification(NotificationMessageDTO messageJson) {
+        NotificationMessage notificationMessage = new NotificationMessage();
+        BeanUtils.copyProperties(messageJson, notificationMessage);
+        notificationService.sendNotification(notificationMessage);
     }
 }

@@ -15,29 +15,26 @@ import java.util.Map;
 
 @Configuration
 public class KafkaConfig {
-//    @Bean
-//    public ConsumerFactory<String, String> consumerFactory() {
-////        JsonDeserializer<NotificationMessageDTO> deserializer = new JsonDeserializer<>(NotificationMessageDTO.class);
-////        deserializer.setRemoveTypeHeaders(false);
-////        deserializer.addTrustedPackages("*");
-////        deserializer.setUseTypeMapperForKey(true);
-//
-//        StringDeserializer deserializer =
-//                new StringDeserializer();
-//
-//        Map<String, Object> config = new HashMap<>();
-//        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-//        config.put(ConsumerConfig.GROUP_ID_CONFIG, "notification-group");
-//        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-//        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
-//        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), deserializer);
-//    }
-//
-//    @Bean
-//    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
-//        ConcurrentKafkaListenerContainerFactory<String, String> factory =
-//                new ConcurrentKafkaListenerContainerFactory<>();
-//        factory.setConsumerFactory(consumerFactory());
-//        return factory;
-//    }
+    @Bean
+    public ConsumerFactory<String, NotificationMessageDTO> consumerFactory() {
+        JsonDeserializer<NotificationMessageDTO> deserializer = new JsonDeserializer<>(NotificationMessageDTO.class);
+        deserializer.setRemoveTypeHeaders(false);
+        deserializer.addTrustedPackages("*");
+        deserializer.setUseTypeMapperForKey(true);
+
+        Map<String, Object> config = new HashMap<>();
+        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        config.put(ConsumerConfig.GROUP_ID_CONFIG, "notification-group");
+        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, deserializer);
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), deserializer);
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, NotificationMessageDTO> kafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, NotificationMessageDTO> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        return factory;
+    }
 }

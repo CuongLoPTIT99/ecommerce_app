@@ -16,38 +16,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
-@RequiredArgsConstructor
 @ComponentScan(basePackages = {
         "com.ecommerceapp.customerservice",
-        "com.ecommerceapp.commonmodule.base"
+        "com.ecommerceapp.commonmodule"
 })
-public class CustomerServiceApplication implements CommandLineRunner {
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final NotificationService notificationService;
+public class CustomerServiceApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CustomerServiceApplication.class, args);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        scheduler.scheduleAtFixedRate(this::doSomething, 0, 5, TimeUnit.SECONDS);
-    }
-
-    private void doSomething() {
-        // Your scheduled task logic here
-        System.out.println("Scheduled task executed");
-        // For example, you can call a method to fetch data from the database or perform some other operation
-        // fetchDataFromDatabase();
-        // Or you can send a notification using the NotificationService
-//        notificationService.sendPushNotification(NotificationMessageDTO.builder()
-//                .title("Test Notification")
-//                .content("This is a test notification")
-//                .recipientId("12345")
-//                .status(Enums.NotificationStatus.PENDING)
-//                .createdAt(new Timestamp(System.currentTimeMillis()))
-//                .build());
-
-        notificationService.sendPushNotification("1lo");
     }
 }

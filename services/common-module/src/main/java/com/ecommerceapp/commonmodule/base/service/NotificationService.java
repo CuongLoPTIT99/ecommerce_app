@@ -8,17 +8,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
-//    private final KafkaTemplate<String, NotificationMessageDTO> kafkaTemplate;
-//    private final KafkaTemplate<String, NotificationMessageDTO> kafkaTemplate;
-    private final KafkaTemplate<String, String> kafkaTemplate1;
+    private final KafkaTemplate<String, NotificationMessageDTO> kafkaTemplate;
 
-//    public void sendPushNotification(NotificationMessageDTO message) {
-//        // Logic to send notification
-//        kafkaTemplate.send("notification2", message);
-//    }
-
-    public void sendPushNotification(String message) {
+    public void sendPushNotification(NotificationMessageDTO message) {
         // Logic to send notification
-        kafkaTemplate1.send("notification3", message);
+        kafkaTemplate.send("notification", message);
     }
 }

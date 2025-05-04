@@ -3,6 +3,7 @@ package com.ecommerceapp.notificationservice.service;
 import com.ecommerceapp.notificationservice.model.NotificationMessage;
 import com.ecommerceapp.notificationservice.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.MessagingException;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,11 @@ public class NotificationService {
         // todo: save to db
         repository.save(message);
         System.out.println("Notification sent: " + message);
-//        messagingTemplate.convertAndSend("/topic/notifications", message);
+        try {
+            messagingTemplate.convertAndSend("/topic/notification", message);
+        } catch (MessagingException e) {
+            System.out.println("Error sending notification: " + e.getMessage());
+        }
+
     }
 }

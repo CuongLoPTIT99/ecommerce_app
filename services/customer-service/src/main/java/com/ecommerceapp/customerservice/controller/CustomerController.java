@@ -1,5 +1,8 @@
 package com.ecommerceapp.customerservice.controller;
 
+import com.ecommerceapp.commonmodule.base.dto.NotificationMessageDTO;
+import com.ecommerceapp.commonmodule.base.service.NotificationService;
+import com.ecommerceapp.commonmodule.constant.Enums;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,6 +26,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/customer")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequiredArgsConstructor
 public class CustomerController {
 //    private final CustomerService customerService;
@@ -29,7 +34,7 @@ public class CustomerController {
 //    public ResponseEntity<?> createCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {
 //        return ResponseEntity.ok(customerService.createCustomer(customerRequestDTO));
 //    }
-
+    private final NotificationService notificationService;
     private final JdbcTemplate jdbcTemplate;
 
     @PostMapping("/traCuuHoSo")
@@ -59,6 +64,20 @@ public class CustomerController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(rs, headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/notification")
+    public ResponseEntity<?> testNotification(@RequestBody String token) {
+        notificationService.sendPushNotification(NotificationMessageDTO.builder()
+                .title("Test Notification")
+                .content("This is a test notification")
+                .recipientId("12345")
+                .status(Enums.NotificationStatus.PENDING)
+                .createdAt(new Timestamp(System.currentTimeMillis()))
+                .build());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>("ok", headers, HttpStatus.OK);
     }
 
 //    public ResponseEntity<?> updateCustomer(@RequestBody CustomerRequestDTO customerRequestDTO) {

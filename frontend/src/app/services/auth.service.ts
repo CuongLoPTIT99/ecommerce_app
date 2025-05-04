@@ -3,6 +3,8 @@ import {OidcSecurityService} from "angular-auth-oidc-client";
 import {catchError, map, Observable, tap} from "rxjs";
 import {HttpClient, HttpErrorResponse, HttpResponse, HttpStatusCode} from "@angular/common/http";
 import {environment} from "../../environments/environment";
+import {Client} from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,7 @@ export class AuthService {
     // this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated }) => {
     //   console.log('User is authenticated:', isAuthenticated);
     // });
+
   }
 
   /** Start the login flow */
@@ -68,10 +71,8 @@ export class AuthService {
   }
 
   getUserInfo(): any {
-    this.http.get(`${environment.apiGatewayUrl}/auth/userinfo`,
-      {
-        withCredentials: true,
-      }
+    this.http.post(`${environment.apiGatewayUrl}/customer/notification`,
+      {}
     ).subscribe((res) => {
       console.log(res);
       return res;
