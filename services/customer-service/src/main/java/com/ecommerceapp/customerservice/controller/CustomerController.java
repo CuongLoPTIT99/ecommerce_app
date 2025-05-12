@@ -1,6 +1,8 @@
 package com.ecommerceapp.customerservice.controller;
 
+import com.ecommerceapp.commonmodule.base.dto.MailItemDTO;
 import com.ecommerceapp.commonmodule.base.dto.NotificationMessageDTO;
+import com.ecommerceapp.commonmodule.base.service.MailService;
 import com.ecommerceapp.commonmodule.base.service.NotificationService;
 import com.ecommerceapp.commonmodule.constant.Enums;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,6 +37,7 @@ public class CustomerController {
 //        return ResponseEntity.ok(customerService.createCustomer(customerRequestDTO));
 //    }
     private final NotificationService notificationService;
+    private final MailService mailService;
     private final JdbcTemplate jdbcTemplate;
 
     @PostMapping("/traCuuHoSo")
@@ -69,6 +72,20 @@ public class CustomerController {
     @PostMapping("/notification")
     public ResponseEntity<?> testNotification(@RequestBody String token) {
         notificationService.sendPushNotification(NotificationMessageDTO.builder()
+                .title("Test Notification")
+                .content("This is a test notification")
+                .recipientId("12345")
+                .status(Enums.NotificationStatus.PENDING)
+                .createdAt(new Timestamp(System.currentTimeMillis()))
+                .build());
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>("ok", headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/mail")
+    public ResponseEntity<?> testMail(@RequestBody String token) {
+        mailService.sendMail(MailItemDTO.builder()
                 .title("Test Notification")
                 .content("This is a test notification")
                 .recipientId("12345")

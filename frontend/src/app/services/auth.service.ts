@@ -79,6 +79,15 @@ export class AuthService {
     });
   }
 
+  getUserInfo1(): any {
+    this.http.post(`${environment.apiGatewayUrl}/customer/mail`,
+      {}
+    ).subscribe((res) => {
+      console.log(res);
+      return res;
+    });
+  }
+
   checkLoginStatus1(): Observable<any> {
     return this.http.get(`${environment.apiGatewayUrl}/auth/status`,
       {

@@ -15,11 +15,12 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
-        <module name="api-gateway" />
         <module name="config-server" />
         <module name="discovery-server" />
         <module name="customer-service" />
         <module name="common-module" />
+        <module name="api-gateway" />
+        <module name="mail-service" />
         <module name="notification-service" />
       </profile>
     </annotationProcessing>
@@ -40,6 +41,7 @@
       <module name="discovery-server" options="-parameters" />
       <module name="discovery-service" options="-parameters" />
       <module name="ecommerce-app" options="" />
+      <module name="mail-service" options="-parameters" />
       <module name="notification-service" options="-parameters" />
     </option>
   </component>

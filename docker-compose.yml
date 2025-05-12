@@ -15,14 +15,6 @@ services:
       - microservices-net
     restart: unless-stopped
 
-  zipkin:
-    container_name: zipkin
-    image: openzipkin/zipkin
-    ports:
-      - "9411:9411"
-    networks:
-      - microservices-net
-
   mongodb:
     image: mongo
     container_name: mongo_db
@@ -146,6 +138,20 @@ services:
     ports:
       - 1080:1080
       - 1025:1025
+    networks:
+      - microservices-net
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.68.0
+    container_name: jaeger
+    ports:
+      - "16686:16686"    # Web UI
+      - "4317:4317"      # OTLP gRPC (default for OTel Java agent)
+      - "4318:4318"      # OTLP HTTP
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - microservices-net
 
 networks:
   microservices-net:

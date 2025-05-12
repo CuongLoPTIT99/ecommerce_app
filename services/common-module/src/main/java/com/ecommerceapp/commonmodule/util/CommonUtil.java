@@ -1,8 +1,8 @@
-package com.ecommerceapp.commonmodule.utils;
+package com.ecommerceapp.commonmodule.util;
 
 import java.util.Collection;
 
-public class CommonUtils {
+public class CommonUtil {
     public static boolean isNull(Object obj) {
         return obj == null;
     }

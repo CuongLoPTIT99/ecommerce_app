@@ -1,3 +1,5 @@
+server:
+  port: 8082
 spring:
   application:
     name: customer-service
@@ -15,5 +17,13 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-server:
-  port: 8082
+  management:
+    tracing:
+      sampling:
+        probability: 1.0
+otel:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4318
+logging:
+  config: classpath:log4j2.xml

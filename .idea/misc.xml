@@ -18,6 +18,7 @@
         <option value="$PROJECT_DIR$/services/common-module/pom.xml" />
         <option value="$PROJECT_DIR$/services/common-lib/pom.xml" />
         <option value="$PROJECT_DIR$/services/notification-service/pom.xml" />
+        <option value="$PROJECT_DIR$/services/mail-service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
