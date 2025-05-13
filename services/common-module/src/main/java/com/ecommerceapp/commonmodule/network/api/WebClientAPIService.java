@@ -1,4 +1,4 @@
-package com.ecommerceapp.commonmodule.api;
+package com.ecommerceapp.commonmodule.network.api;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

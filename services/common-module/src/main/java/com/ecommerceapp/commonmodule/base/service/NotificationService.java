@@ -1,6 +1,6 @@
 package com.ecommerceapp.commonmodule.base.service;
 
-import com.ecommerceapp.commonmodule.base.dto.NotificationMessageDTO;
+import com.ecommerceapp.commonmodule.dto.NotificationMessageDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

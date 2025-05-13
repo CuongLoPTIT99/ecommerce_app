@@ -1,4 +1,4 @@
-package com.ecommerceapp.commonmodule.api;
+package com.ecommerceapp.commonmodule.network.api;
 
 import org.springframework.http.HttpRequest;
 

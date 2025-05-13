@@ -1,24 +1,20 @@
 package com.ecommerceapp.customerservice.controller;
 
-import com.ecommerceapp.commonmodule.base.dto.MailItemDTO;
-import com.ecommerceapp.commonmodule.base.dto.NotificationMessageDTO;
+import com.ecommerceapp.commonmodule.dto.MailItemDTO;
+import com.ecommerceapp.commonmodule.dto.NotificationMessageDTO;
 import com.ecommerceapp.commonmodule.base.service.MailService;
 import com.ecommerceapp.commonmodule.base.service.NotificationService;
 import com.ecommerceapp.commonmodule.constant.Enums;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.parser.AcceptEncoding;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.util.List;

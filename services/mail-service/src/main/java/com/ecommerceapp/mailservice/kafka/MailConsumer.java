@@ -1,11 +1,9 @@
 package com.ecommerceapp.mailservice.kafka;
 
-import com.ecommerceapp.commonmodule.base.dto.MailItemDTO;
-import com.ecommerceapp.commonmodule.base.dto.NotificationMessageDTO;
+import com.ecommerceapp.commonmodule.dto.MailItemDTO;
 import com.ecommerceapp.mailservice.model.MailItem;
 import com.ecommerceapp.mailservice.service.MailItemService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 

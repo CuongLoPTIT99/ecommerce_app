@@ -1,6 +1,6 @@
 package com.ecommerceapp.commonmodule.base.service;
 
-import com.ecommerceapp.commonmodule.base.dto.MailItemDTO;
+import com.ecommerceapp.commonmodule.dto.MailItemDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;

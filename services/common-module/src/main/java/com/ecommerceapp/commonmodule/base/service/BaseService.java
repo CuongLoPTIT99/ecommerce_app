@@ -5,6 +5,10 @@ import com.ecommerceapp.commonmodule.base.repository.BaseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.StreamSupport;
+
 @Slf4j
 public abstract class BaseService<T extends BaseEntity, Tid> {
     public abstract BaseRepository<T, Tid> getRepository();
@@ -59,19 +63,39 @@ public abstract class BaseService<T extends BaseEntity, Tid> {
         return obj;
     }
 
-    public abstract T preAdd(T obj) throws RuntimeException;
+    public List<T> getAll() throws RuntimeException {
+        List<T> result;
+        try {
+            result = StreamSupport.stream(getRepository().findAll().spliterator(), false)
+                    .toList();
+        } catch (Exception e) {
+            log.error("Error while getting all object from DB", e);
+            throw new RuntimeException("Error while getting al object from DB", e);
+        }
+        return result;
+    }
 
-    public abstract T postAdd(T obj) throws RuntimeException;
+    public T preAdd(T obj) throws RuntimeException {
+        return obj;
+    }
 
-    public abstract T preEdit(T obj) throws RuntimeException;
+    public T postAdd(T obj) throws RuntimeException {
+        return obj;
+    }
 
-    public abstract T postEdit(T obj) throws RuntimeException;
+    public T preEdit(T obj) throws RuntimeException {
+        return obj;
+    }
 
-    public abstract void preDeleteById(Tid id) throws RuntimeException;
+    public T postEdit(T obj) throws RuntimeException {
+        return obj;
+    }
 
-    public abstract void postDeleteById(Tid id) throws RuntimeException;
+    public void preDeleteById(Tid id) throws RuntimeException {}
 
-    public abstract void preGetById(Tid id) throws RuntimeException;
+    public void postDeleteById(Tid id) throws RuntimeException {}
 
-    public abstract void postGetById(T obj) throws RuntimeException;
+    public void preGetById(Tid id) throws RuntimeException {}
+
+    public void postGetById(T obj) throws RuntimeException {}
 }

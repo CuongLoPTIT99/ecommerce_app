@@ -1,4 +1,4 @@
-package com.ecommerceapp.commonmodule.base.dto;
+package com.ecommerceapp.commonmodule.dto;
 
 import com.ecommerceapp.commonmodule.constant.Enums;
 import com.fasterxml.jackson.annotation.JsonFormat;

@@ -1,6 +1,5 @@
 package com.ecommerceapp.mailservice.service;
 
-import com.ecommerceapp.commonmodule.base.dto.MailItemDTO;
 import com.ecommerceapp.mailservice.model.MailItem;
 import com.ecommerceapp.mailservice.repository.MailItemRepository;
 import jakarta.mail.MessagingException;
