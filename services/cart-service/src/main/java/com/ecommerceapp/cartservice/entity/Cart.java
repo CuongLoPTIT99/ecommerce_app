@@ -1,4 +1,4 @@
-package com.ecommerceapp.orderservice.entity;
+package com.ecommerceapp.cartservice.entity;
 
 import com.ecommerceapp.commonmodule.base.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -11,8 +11,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "order")
-public class Order implements BaseEntity<Long>, Serializable {
+@Table(name = "cart")
+public class Cart implements BaseEntity<Long>, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

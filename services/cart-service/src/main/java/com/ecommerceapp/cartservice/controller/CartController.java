@@ -1,9 +1,9 @@
-package com.ecommerceapp.orderservice.controller;
+package com.ecommerceapp.cartservice.controller;
 
+import com.ecommerceapp.cartservice.entity.Cart;
+import com.ecommerceapp.cartservice.service.CartService;
 import com.ecommerceapp.commonmodule.dto.CartDTO;
-import com.ecommerceapp.commonmodule.dto.OrderDTO;
 import com.ecommerceapp.commonmodule.network.api.ResponseWrapper;
-import com.ecommerceapp.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/cart")
 @RequiredArgsConstructor
-public class OrderController {
-    private final OrderService orderService;
+public class CartController {
+    private final CartService cartService;
 
     @PostMapping("")
-    public ResponseEntity<ResponseWrapper> create(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<ResponseWrapper> create(@RequestBody CartDTO cartDTO) {
         ResponseWrapper rw = new ResponseWrapper();
         try {
-            OrderDTO created = orderService.create(orderDTO);
+            CartDTO created = cartService.create(cartDTO);
             rw.setData(created);
-            rw.setMessage("Order created successfully");
+            rw.setMessage("Cart created successfully");
             rw.setIsSuccess(true);
         } catch (Exception e) {
             rw.setMessage(e.getMessage());
@@ -32,12 +32,12 @@ public class OrderController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> update(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> update(@RequestBody  CartDTO cartDTO) {
         ResponseWrapper rw = new ResponseWrapper();
         try {
-            OrderDTO updated = orderService.update(orderDTO);
+            CartDTO updated = cartService.update(cartDTO);
             rw.setData(updated);
-            rw.setMessage("Order updated successfully");
+            rw.setMessage("Cart updated successfully");
             rw.setIsSuccess(true);
         } catch (Exception e) {
             rw.setMessage(e.getMessage());
@@ -50,8 +50,8 @@ public class OrderController {
     public ResponseEntity<?> delete(@PathVariable Long id) {
         ResponseWrapper rw = new ResponseWrapper();
         try {
-            orderService.deleteById(id);
-            rw.setMessage("Order deleted successfully");
+            cartService.deleteById(id);
+            rw.setMessage("Cart deleted successfully");
             rw.setIsSuccess(true);
         } catch (Exception e) {
             rw.setMessage(e.getMessage());
@@ -64,9 +64,9 @@ public class OrderController {
     public ResponseEntity<?> getByCustomer(@PathVariable Long customerId) {
         ResponseWrapper rw = new ResponseWrapper();
         try {
-            List<OrderDTO> result = orderService.getByCustomerId(customerId);
+            List<CartDTO> result = cartService.getByCustomerId(customerId);
             rw.setData(result);
-            rw.setMessage("Get list orders for customer successfully");
+            rw.setMessage("Get list carts for customer successfully");
             rw.setIsSuccess(true);
         } catch (Exception e) {
             rw.setMessage(e.getMessage());

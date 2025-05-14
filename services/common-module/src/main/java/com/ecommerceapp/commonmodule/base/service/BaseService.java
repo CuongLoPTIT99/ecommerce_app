@@ -1,42 +1,48 @@
 package com.ecommerceapp.commonmodule.base.service;
 
 import com.ecommerceapp.commonmodule.base.entity.BaseEntity;
+import com.ecommerceapp.commonmodule.base.mapper.BaseMapper;
 import com.ecommerceapp.commonmodule.base.repository.BaseRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Slf4j
-public abstract class BaseService<T extends BaseEntity, Tid> {
+public abstract class BaseService<T extends BaseEntity, R extends Object, Tid> {
     public abstract BaseRepository<T, Tid> getRepository();
-    public T add(T obj) throws RuntimeException {
+
+    public abstract BaseMapper<T, R> getMapper();
+    public R create(R dto) throws RuntimeException {
+        T obj;
         try {
+            obj = getMapper().fromDTO(dto);
             preAdd(obj);
             getRepository().save(obj);
-            postAdd(obj);
+            postAdd(obj, dto);
         } catch (Exception e) {
             log.error("Error while adding object to DB", e);
             throw new RuntimeException("Error while adding object to DB", e);
         }
-        return obj;
+        return getMapper().toDTO(obj);
     }
 
-    public T edit(T obj) throws RuntimeException {
+    public R update(R dto) throws RuntimeException {
+        T obj, current;
         try {
-            T current = getById((Tid) obj.getId());
+            obj = getMapper().fromDTO(dto);
+            current = getById((Tid) obj.getId());
             if (current == null) throw new RuntimeException("Data is not exist in DB");
-            preEdit(current);
+            preEdit(current, dto);
             BeanUtils.copyProperties(obj, current, "id", "createdAt", "createdBy");
             getRepository().save(current);
-            postEdit(current);
+            postEdit(current, dto);
         } catch (Exception e) {
             log.error("Error while editing object to DB", e);
             throw new RuntimeException("Error while editing object to DB", e);
         }
-        return obj;
+        return getMapper().toDTO(obj);
     }
 
     public void deleteById(Tid id) throws RuntimeException {
@@ -79,15 +85,15 @@ public abstract class BaseService<T extends BaseEntity, Tid> {
         return obj;
     }
 
-    public T postAdd(T obj) throws RuntimeException {
+    public T postAdd(T obj, R dto) throws RuntimeException {
         return obj;
     }
 
-    public T preEdit(T obj) throws RuntimeException {
+    public T preEdit(T obj, R dto) throws RuntimeException {
         return obj;
     }
 
-    public T postEdit(T obj) throws RuntimeException {
+    public T postEdit(T obj, R dto) throws RuntimeException {
         return obj;
     }
 

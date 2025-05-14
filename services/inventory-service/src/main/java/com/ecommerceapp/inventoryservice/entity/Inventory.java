@@ -1,4 +1,4 @@
-package com.ecommerceapp.orderservice.entity;
+package com.ecommerceapp.inventoryservice.entity;
 
 import com.ecommerceapp.commonmodule.base.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -7,20 +7,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "order")
-public class Order implements BaseEntity<Long>, Serializable {
+@Table(name = "inventory")
+public class Inventory implements BaseEntity<Long>, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "customer_id")
-    private Long customerId;
     @Column(name = "product_id")
     private Long productId;
     private Integer quantity;
-    @Column(name = "total_price")
-    private Double totalPrice;
 }

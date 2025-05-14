@@ -15,18 +15,19 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
-        <module name="config-server" />
         <module name="cart-service" />
-        <module name="discovery-server" />
-        <module name="inventory-service" />
         <module name="customer-service" />
         <module name="common-module" />
-        <module name="api-gateway" />
         <module name="product-service" />
+        <module name="notification-service" />
+        <module name="config-server" />
+        <module name="discovery-server" />
+        <module name="inventory-service" />
+        <module name="payment-service" />
+        <module name="api-gateway" />
         <module name="shipment-service" />
         <module name="order-service" />
         <module name="mail-service" />
-        <module name="notification-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>

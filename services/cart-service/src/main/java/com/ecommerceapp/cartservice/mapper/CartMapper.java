@@ -1,25 +1,25 @@
-package com.ecommerceapp.orderservice.mapper;
+package com.ecommerceapp.cartservice.mapper;
 
+import com.ecommerceapp.cartservice.entity.Cart;
 import com.ecommerceapp.commonmodule.base.mapper.BaseMapper;
-import com.ecommerceapp.commonmodule.dto.OrderDTO;
-import com.ecommerceapp.orderservice.entity.Order;
+import com.ecommerceapp.commonmodule.dto.CartDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface OrderMapper extends BaseMapper<Order, OrderDTO> {
-    OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
+public interface CartMapper extends BaseMapper<Cart, CartDTO> {
+    CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "brand", target = "brand")
     @Mapping(source = "status", target = "status")
-    OrderDTO toDTO(Order order);
+    CartDTO toDTO(Cart cart);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "brand", target = "brand")
     @Mapping(source = "status", target = "status")
-    Order fromDTO(OrderDTO dto);
+    Cart fromDTO(CartDTO dto);
 }

@@ -1,20 +1,21 @@
 package com.ecommerceapp.commonmodule.dto;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
 public class PaymentDTO {
     private Long id;
-    private Long customerId;
-    private Long productId;
-    private Integer quantity;
-    private Double totalPrice;
+    private Long orderId;
+    private String type;
+    private Double amount;
+    private String status;
 
-    public PaymentDTO(Long id, Long customerId, Long productId, Integer quantity, Double totalPrice) {
+    public PaymentDTO(Long id, Long orderId, String type, Double amount, String status) {
         this.id = id;
-        this.customerId = customerId;
-        this.productId = productId;
-        this.quantity = quantity;
-        this.totalPrice = totalPrice;
+        this.orderId = orderId;
+        this.type = type;
+        this.amount = amount;
+        this.status = status;
     }
 }
