@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class CartService extends BaseService<Cart, CartDTO, Long> {
+public class CartService extends BaseService<Cart, CartDTO, CartDTO, Long> {
     private final CartRepository cartRepository;
     @Override
     public BaseRepository<Cart, Long> getRepository() {
@@ -24,7 +24,7 @@ public class CartService extends BaseService<Cart, CartDTO, Long> {
     }
 
     @Override
-    public BaseMapper<Cart, CartDTO> getMapper() {
+    public BaseMapper<Cart, CartDTO, CartDTO> getMapper() {
         return CartMapper.INSTANCE;
     }
 

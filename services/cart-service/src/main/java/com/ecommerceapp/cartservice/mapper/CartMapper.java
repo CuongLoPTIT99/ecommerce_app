@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface CartMapper extends BaseMapper<Cart, CartDTO> {
+public interface CartMapper extends BaseMapper<Cart, CartDTO, CartDTO> {
     CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
 
     @Mapping(source = "id", target = "id")

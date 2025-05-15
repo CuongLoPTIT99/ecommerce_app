@@ -1,0 +1,8 @@
+package com.ecommerceapp.commonmodule.saga.event;
+
+import lombok.Data;
+
+@Data
+public class InventoryReservedEvent {
+    private String orderId;
+}

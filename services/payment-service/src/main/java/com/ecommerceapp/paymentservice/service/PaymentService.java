@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class PaymentService extends BaseService<Payment, PaymentDTO, Long> {
+public class PaymentService extends BaseService<Payment, PaymentDTO, PaymentDTO, Long> {
     private final PaymentRepository paymentRepository;
 
     @Override
@@ -22,7 +22,7 @@ public class PaymentService extends BaseService<Payment, PaymentDTO, Long> {
     }
 
     @Override
-    public BaseMapper<Payment, PaymentDTO> getMapper() {
+    public BaseMapper<Payment, PaymentDTO, PaymentDTO> getMapper() {
         return PaymentMapper.INSTANCE;
     }
 }

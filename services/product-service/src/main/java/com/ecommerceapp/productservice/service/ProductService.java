@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class ProductService extends BaseService<Product, ProductDTO, Long> {
+public class ProductService extends BaseService<Product, ProductDTO, ProductDTO, Long> {
     private final ProductRepository productRepository;
 
     @Override
@@ -26,7 +26,7 @@ public class ProductService extends BaseService<Product, ProductDTO, Long> {
     }
 
     @Override
-    public BaseMapper<Product, ProductDTO> getMapper() {
+    public BaseMapper<Product, ProductDTO, ProductDTO> getMapper() {
         return ProductMapper.INSTANCE;
     }
 

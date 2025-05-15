@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface InventoryMapper extends BaseMapper<Inventory, InventoryDTO> {
+public interface InventoryMapper extends BaseMapper<Inventory, InventoryDTO, InventoryDTO> {
     InventoryMapper INSTANCE = Mappers.getMapper(InventoryMapper.class);
 
     @Mapping(source = "id", target = "id")

@@ -8,7 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface PaymentMapper extends BaseMapper<Payment, PaymentDTO> {
+public interface PaymentMapper extends BaseMapper<Payment, PaymentDTO, PaymentDTO> {
     PaymentMapper INSTANCE = Mappers.getMapper(PaymentMapper.class);
 
     @Mapping(source = "id", target = "id")

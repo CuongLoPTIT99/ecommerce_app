@@ -10,39 +10,44 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 @Slf4j
-public abstract class BaseService<T extends BaseEntity, R extends Object, Tid> {
+public abstract class BaseService<T extends BaseEntity, R extends Object, S extends Object, Tid> {
     public abstract BaseRepository<T, Tid> getRepository();
 
-    public abstract BaseMapper<T, R> getMapper();
-    public R create(R dto) throws RuntimeException {
+    public abstract BaseMapper<T, R, S> getMapper();
+
+    public S create(R input) throws RuntimeException {
         T obj;
+        S output;
         try {
-            obj = getMapper().fromDTO(dto);
-            preAdd(obj);
+            obj = getMapper().fromDTO(input);
+            preCreate(obj, input);
             getRepository().save(obj);
-            postAdd(obj, dto);
+            output = getMapper().toDTO(obj);
+            postCreate(obj, input, output);
         } catch (Exception e) {
             log.error("Error while adding object to DB", e);
             throw new RuntimeException("Error while adding object to DB", e);
         }
-        return getMapper().toDTO(obj);
+        return output;
     }
 
-    public R update(R dto) throws RuntimeException {
+    public S update(R input) throws RuntimeException {
         T obj, current;
+        S output;
         try {
-            obj = getMapper().fromDTO(dto);
-            current = getById((Tid) obj.getId());
+            obj = getMapper().fromDTO(input);
+            current = getRepository().findById((Tid) obj.getId()).orElse(null);
             if (current == null) throw new RuntimeException("Data is not exist in DB");
-            preEdit(current, dto);
+            preUpdate(current, input);
             BeanUtils.copyProperties(obj, current, "id", "createdAt", "createdBy");
             getRepository().save(current);
-            postEdit(current, dto);
+            output = getMapper().toDTO(current);
+            postUpdate(current, input, output);
         } catch (Exception e) {
             log.error("Error while editing object to DB", e);
             throw new RuntimeException("Error while editing object to DB", e);
         }
-        return getMapper().toDTO(obj);
+        return output;
     }
 
     public void deleteById(Tid id) throws RuntimeException {
@@ -56,7 +61,7 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, Tid> {
         }
     }
 
-    public T getById(Tid id) throws RuntimeException {
+    public S getById(Tid id) throws RuntimeException {
         T obj = null;
         try {
             preGetById(id);
@@ -66,10 +71,10 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, Tid> {
             log.error("Error while adding object to DB", e);
             throw new RuntimeException("Error while adding object to DB", e);
         }
-        return obj;
+        return getMapper().toDTO(obj);
     }
 
-    public List<T> getAll() throws RuntimeException {
+    public List<S> getAll() throws RuntimeException {
         List<T> result;
         try {
             result = StreamSupport.stream(getRepository().findAll().spliterator(), false)
@@ -78,24 +83,18 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, Tid> {
             log.error("Error while getting all object from DB", e);
             throw new RuntimeException("Error while getting al object from DB", e);
         }
-        return result;
+        return result.stream()
+                .map(getMapper()::toDTO)
+                .toList();
     }
 
-    public T preAdd(T obj) throws RuntimeException {
-        return obj;
-    }
+    public void preCreate(T obj, R input) throws RuntimeException {}
 
-    public T postAdd(T obj, R dto) throws RuntimeException {
-        return obj;
-    }
+    public void postCreate(T obj, R input, S output) throws RuntimeException {}
 
-    public T preEdit(T obj, R dto) throws RuntimeException {
-        return obj;
-    }
+    public void preUpdate(T obj, R input) throws RuntimeException {}
 
-    public T postEdit(T obj, R dto) throws RuntimeException {
-        return obj;
-    }
+    public void postUpdate(T obj, R input, S output) throws RuntimeException {}
 
     public void preDeleteById(Tid id) throws RuntimeException {}
 

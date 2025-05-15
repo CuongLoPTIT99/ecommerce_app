@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class InventoryService extends BaseService<Inventory, InventoryDTO, Long> {
+public class InventoryService extends BaseService<Inventory, InventoryDTO, InventoryDTO, Long> {
     private final InventoryRepository inventoryRepository;
     @Override
     public BaseRepository<Inventory, Long> getRepository() {
@@ -21,7 +21,7 @@ public class InventoryService extends BaseService<Inventory, InventoryDTO, Long>
     }
 
     @Override
-    public BaseMapper<Inventory, InventoryDTO> getMapper() {
+    public BaseMapper<Inventory, InventoryDTO, InventoryDTO> getMapper() {
         return InventoryMapper.INSTANCE;
     }
 }

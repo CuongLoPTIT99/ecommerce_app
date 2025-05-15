@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class ShipmentService extends BaseService<Shipment, ShipmentDTO, Long> {
+public class ShipmentService extends BaseService<Shipment, ShipmentDTO, ShipmentDTO, Long> {
     private final ShipmentRepository shipmentRepository;
 
     @Override
@@ -24,7 +24,7 @@ public class ShipmentService extends BaseService<Shipment, ShipmentDTO, Long> {
     }
 
     @Override
-    public BaseMapper<Shipment, ShipmentDTO> getMapper() {
+    public BaseMapper<Shipment, ShipmentDTO, ShipmentDTO> getMapper() {
         return ShipmentMapper.INSTANCE;
     }
 }
