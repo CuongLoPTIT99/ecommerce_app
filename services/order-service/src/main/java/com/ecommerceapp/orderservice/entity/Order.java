@@ -1,6 +1,7 @@
 package com.ecommerceapp.orderservice.entity;
 
 import com.ecommerceapp.commonmodule.base.entity.BaseEntity;
+import com.ecommerceapp.commonmodule.enums.OrderEnums;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,4 +24,8 @@ public class Order implements BaseEntity<Long>, Serializable {
     private Integer quantity;
     @Column(name = "total_price")
     private Double totalPrice;
+    @Enumerated(EnumType.STRING)
+    private OrderEnums.OrderStatus status;
+    @Column(name = "cancel_reason")
+    private String cancelReason;
 }

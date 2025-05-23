@@ -16,7 +16,7 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
     public abstract BaseMapper<T, R, S> getMapper();
 
     public S create(R input) throws RuntimeException {
-        T obj;
+        T obj = null;
         S output;
         try {
             obj = getMapper().fromDTO(input);
@@ -32,7 +32,7 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
     }
 
     public S update(R input) throws RuntimeException {
-        T obj, current;
+        T obj = null, current;
         S output;
         try {
             obj = getMapper().fromDTO(input);
@@ -52,9 +52,10 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
 
     public void deleteById(Tid id) throws RuntimeException {
         try {
-            preDeleteById(id);
+            T current = getRepository().findById(id).orElse(null);
+            preDeleteById(current, id);
             getRepository().deleteById(id);
-            postDeleteById(id);
+            postDeleteById(current, id);
         } catch (Exception e) {
             log.error("Error while deleting object to DB", e);
             throw new RuntimeException("Error while deleting object to DB", e);
@@ -68,7 +69,7 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
             obj = getRepository().findById(id).orElse(null);
             postGetById(obj);
         } catch (Exception e) {
-            log.error("Error while adding object to DB", e);
+            log.error("Error while getting object to DB", e);
             throw new RuntimeException("Error while adding object to DB", e);
         }
         return getMapper().toDTO(obj);
@@ -96,9 +97,9 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
 
     public void postUpdate(T obj, R input, S output) throws RuntimeException {}
 
-    public void preDeleteById(Tid id) throws RuntimeException {}
+    public void preDeleteById(T obj, Tid id) throws RuntimeException {}
 
-    public void postDeleteById(Tid id) throws RuntimeException {}
+    public void postDeleteById(T obj, Tid id) throws RuntimeException {}
 
     public void preGetById(Tid id) throws RuntimeException {}
 

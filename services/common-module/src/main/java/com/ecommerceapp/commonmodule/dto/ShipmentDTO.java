@@ -5,16 +5,18 @@ import lombok.Data;
 @Data
 public class ShipmentDTO {
     private Long id;
-    private Long customerId;
-    private Long productId;
-    private Integer quantity;
-    private Double totalPrice;
+    private String phoneNumber;
+    private String city;
+    private String district;
+    private String ward;
+    private String streetAddress;
 
-    public ShipmentDTO(Long id, Long customerId, Long productId, Integer quantity, Double totalPrice) {
+    public ShipmentDTO(Long id, String phoneNumber, String city, String district, String ward, String streetAddress) {
         this.id = id;
-        this.customerId = customerId;
-        this.productId = productId;
-        this.quantity = quantity;
-        this.totalPrice = totalPrice;
+        this.phoneNumber = phoneNumber;
+        this.city = city;
+        this.district = district;
+        this.ward = ward;
+        this.streetAddress = streetAddress;
     }
 }

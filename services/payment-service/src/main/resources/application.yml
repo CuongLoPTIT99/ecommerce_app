@@ -1,0 +1,35 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: payment-service
+  cloud:
+    config:
+      enabled: false
+  #    import: optional:configserver:http://localhost:8888
+  datasource:
+    url: jdbc:postgresql://localhost:5432/payment
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update   # update, create-drop, none
+    show-sql: true        # show SQL queries in console
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  management:
+    tracing:
+      sampling:
+        probability: 1.0
+otel:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4318
+logging:
+  config: classpath:log4j2.xml
+

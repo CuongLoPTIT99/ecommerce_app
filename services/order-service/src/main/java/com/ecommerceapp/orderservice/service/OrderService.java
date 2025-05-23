@@ -3,8 +3,11 @@ package com.ecommerceapp.orderservice.service;
 import com.ecommerceapp.commonmodule.base.mapper.BaseMapper;
 import com.ecommerceapp.commonmodule.base.repository.BaseRepository;
 import com.ecommerceapp.commonmodule.base.service.BaseService;
+import com.ecommerceapp.commonmodule.dto.CancelOrderDTO;
 import com.ecommerceapp.commonmodule.dto.OrderDTO;
+import com.ecommerceapp.commonmodule.enums.OrderEnums;
 import com.ecommerceapp.commonmodule.saga.event.OrderCreatedEvent;
+import com.ecommerceapp.commonmodule.saga.event.OrderFailedEvent;
 import com.ecommerceapp.orderservice.entity.Order;
 import com.ecommerceapp.orderservice.mapper.OrderMapper;
 import com.ecommerceapp.orderservice.repository.OrderRepository;
@@ -40,5 +43,16 @@ public class OrderService extends BaseService<Order, OrderDTO, OrderDTO, Long> {
     public void postCreate(Order obj, OrderDTO input, OrderDTO output) throws RuntimeException {
         // Send order created event to Kafka
         kafkaTemplate.send("order-created", OrderCreatedEvent.builder().orderId(obj.getId()).productId(obj.getProductId()).build());
+    }
+
+    public void cancelOrder(CancelOrderDTO dto) {
+        orderRepository.findById(dto.getOrderId()).ifPresent(order -> {
+            order.setStatus(OrderEnums.OrderStatus.CANCELLED);
+            order.setCancelReason(dto.getCancelReason());
+            orderRepository.save(order);
+        });
+
+        // Publish order cancelled event
+        kafkaTemplate.send("order-failed", OrderFailedEvent.builder().orderId(dto.getOrderId()).build());
     }
 }

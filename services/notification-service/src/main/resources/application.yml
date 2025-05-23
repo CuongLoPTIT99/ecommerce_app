@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: notification-service
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: notification-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: NotificationMessageDTO:com.ecommerceapp.commonmodule.base.dto.NotificationMessageDTO
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/notification
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update   # update, create-drop, none
+    show-sql: true        # show SQL queries in console
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8083

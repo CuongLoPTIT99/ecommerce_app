@@ -1,0 +1,23 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.logo {
+  margin-left: 8px;
+  text-decoration: none;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .logo {
+    font-size: 1.2rem;
+  }
+}
+
+.mat-snack-bar-container {
+  background-color: #4caf50; /* Green background */
+  color: white; /* White text */
+  font-size: 16px;
+}

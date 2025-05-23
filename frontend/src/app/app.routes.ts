@@ -6,11 +6,12 @@ import { HomeComponent } from './components/home/home.component';
 
 // Import guards
 import { AuthGuard } from './guards/auth.guard';
-import {CallbackComponent} from "./components/callback/callback.component";
+import {ProductComponent} from "./components/product/product.component";
 
 // Define routes
 export const routes: Routes = [
   { path: 'home', component: HomeComponent, title: 'Home' , canActivate: [AuthGuard]},
+  { path: 'product', component: ProductComponent, title: 'Product' , canActivate: [AuthGuard]},
   // { path: 'about', component: AboutComponent, title: 'About Us' },
   // { path: 'contact', component: ContactComponent, title: 'Contact Us' },
   // {

@@ -1,0 +1,49 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: mail-service
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: mail-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: '*'
+        spring.json.type.mapping: MailItemDTO:com.ecommerceapp.commonmodule.base.dto.MailItemDTO
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mail
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update   # update, create-drop, none
+    show-sql: true        # show SQL queries in console
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  mail:
+    host: localhost
+    port: 1025
+    username: admin
+    password: admin
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+  management:
+    tracing:
+      sampling:
+        probability: 1.0
+
+otel:
+  exporter:
+    otlp:
+      endpoint: http://localhost:4318

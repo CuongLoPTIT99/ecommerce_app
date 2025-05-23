@@ -1,8 +1,10 @@
 package com.ecommerceapp.orderservice.controller;
 
+import com.ecommerceapp.commonmodule.dto.CancelOrderDTO;
 import com.ecommerceapp.commonmodule.dto.CartDTO;
 import com.ecommerceapp.commonmodule.dto.OrderDTO;
 import com.ecommerceapp.commonmodule.network.api.ResponseWrapper;
+import com.ecommerceapp.orderservice.mapper.OrderMapper;
 import com.ecommerceapp.orderservice.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -67,6 +69,20 @@ public class OrderController {
             List<OrderDTO> result = orderService.getByCustomerId(customerId);
             rw.setData(result);
             rw.setMessage("Get list orders for customer successfully");
+            rw.setIsSuccess(true);
+        } catch (Exception e) {
+            rw.setMessage(e.getMessage());
+            rw.setIsSuccess(false);
+        }
+        return ResponseEntity.ok(rw);
+    }
+
+    @PostMapping("/cancel")
+    public ResponseEntity<ResponseWrapper> cancel(@RequestBody CancelOrderDTO dto) {
+        ResponseWrapper rw = new ResponseWrapper();
+        try {
+            orderService.cancelOrder(dto);
+            rw.setMessage("Order canceled successfully");
             rw.setIsSuccess(true);
         } catch (Exception e) {
             rw.setMessage(e.getMessage());
