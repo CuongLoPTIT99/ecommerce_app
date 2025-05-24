@@ -3,6 +3,8 @@ import {MatDialog, MatDialogActions, MatDialogContent, MatDialogTitle} from "@an
 import {MatIcon} from "@angular/material/icon";
 import {MatButton, MatIconButton} from "@angular/material/button";
 import {Product} from "../../../models/product.model";
+import {CartService} from "../../../services/cart.service";
+import {environment} from "../../../../environments/environment";
 
 @Component({
   selector: 'create-cart',
@@ -30,6 +32,7 @@ export class CreateCartComponent {
 
   constructor(
     private dialog: MatDialog,
+    private cartService: CartService,
   ) {
   }
 
@@ -54,6 +57,10 @@ export class CreateCartComponent {
   }
 
   addToCart() {
-
+    this.cartService.addToCart({} as any).subscribe({
+      next: (response)=> {
+        this.dialog.closeAll()
+      }
+    })
   }
 }

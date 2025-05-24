@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProductController {
     private final ProductService productService;
 
-    @GetMapping("/all")
+    @GetMapping("/list")
     public Page<ProductDTO> getAll(
+            @RequestParam(defaultValue = "") String filterByName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortType
     ) {
-        return productService.getAllByPaging(page, size, sortBy, sortType);
+        return productService.filterAndPaging(filterByName, page, size, sortBy, sortType);
     }
 }

@@ -1,14 +1,23 @@
 package com.ecommerceapp.commonmodule.dto;
 
 import com.ecommerceapp.commonmodule.enums.OrderEnums;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public class OrderDTO {
     private Long id;
+    @NonNull
     private Long customerId;
+    @NonNull
     private Long productId;
+    @NotBlank(message = "Quantity cannot be blank")
+    @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private Integer quantity;
+    @NotBlank(message = "Total price cannot be blank")
+    @Min(value = 0, message = "Total price must be greater than or equal to 0")
     private Double totalPrice;
     private OrderEnums.OrderStatus status;
     private String cancelReason;

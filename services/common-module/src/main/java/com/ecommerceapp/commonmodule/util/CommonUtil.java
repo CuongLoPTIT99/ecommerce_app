@@ -3,9 +3,6 @@ package com.ecommerceapp.commonmodule.util;
 import java.util.Collection;
 
 public class CommonUtil {
-    public static boolean isNull(Object obj) {
-        return obj == null;
-    }
 
     public static boolean isNullOrEmpty(Collection collection) {
         return collection == null || collection.isEmpty();

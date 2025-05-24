@@ -30,7 +30,7 @@ public class ProductService extends BaseService<Product, ProductDTO, ProductDTO,
         return ProductMapper.INSTANCE;
     }
 
-    public Page<ProductDTO> getAllByPaging(int page, int size, String sortBy, String sortType) {
+    public Page<ProductDTO> filterAndPaging(String filterText, int page, int size, String sortBy, String sortType) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return productRepository.findAllByPaging(pageable);
     }

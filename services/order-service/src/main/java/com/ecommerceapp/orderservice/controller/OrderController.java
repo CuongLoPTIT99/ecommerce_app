@@ -6,6 +6,7 @@ import com.ecommerceapp.commonmodule.dto.OrderDTO;
 import com.ecommerceapp.commonmodule.network.api.ResponseWrapper;
 import com.ecommerceapp.orderservice.mapper.OrderMapper;
 import com.ecommerceapp.orderservice.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping("")
-    public ResponseEntity<ResponseWrapper> create(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<ResponseWrapper> create(@Valid @RequestBody OrderDTO orderDTO) {
         ResponseWrapper rw = new ResponseWrapper();
         try {
             OrderDTO created = orderService.create(orderDTO);
@@ -34,7 +35,7 @@ public class OrderController {
     }
 
     @PutMapping("")
-    public ResponseEntity<?> update(@RequestBody OrderDTO orderDTO) {
+    public ResponseEntity<?> update(@Valid @RequestBody OrderDTO orderDTO) {
         ResponseWrapper rw = new ResponseWrapper();
         try {
             OrderDTO updated = orderService.update(orderDTO);
@@ -78,7 +79,7 @@ public class OrderController {
     }
 
     @PostMapping("/cancel")
-    public ResponseEntity<ResponseWrapper> cancel(@RequestBody CancelOrderDTO dto) {
+    public ResponseEntity<ResponseWrapper> cancel(@Valid @RequestBody CancelOrderDTO dto) {
         ResponseWrapper rw = new ResponseWrapper();
         try {
             orderService.cancelOrder(dto);

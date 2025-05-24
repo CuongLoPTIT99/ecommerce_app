@@ -16,7 +16,7 @@ public class MailConsumer {
     public void sendMail2Server(MailItemDTO mailItemDTO) {
         mailItemService.sendPaymentSuccessEmail(
                 MailItem.builder()
-                        .sendTo(mailItemDTO.getRecipientId())
+                        .sendTo(mailItemDTO.getSendTo())
                         .subject(mailItemDTO.getTitle())
                         .body(mailItemDTO.getContent())
                         .build()

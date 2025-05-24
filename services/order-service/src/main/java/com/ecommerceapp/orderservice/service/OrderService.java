@@ -3,7 +3,10 @@ package com.ecommerceapp.orderservice.service;
 import com.ecommerceapp.commonmodule.base.mapper.BaseMapper;
 import com.ecommerceapp.commonmodule.base.repository.BaseRepository;
 import com.ecommerceapp.commonmodule.base.service.BaseService;
+import com.ecommerceapp.commonmodule.base.service.MailService;
+import com.ecommerceapp.commonmodule.base.service.NotificationService;
 import com.ecommerceapp.commonmodule.dto.CancelOrderDTO;
+import com.ecommerceapp.commonmodule.dto.NotificationMessageDTO;
 import com.ecommerceapp.commonmodule.dto.OrderDTO;
 import com.ecommerceapp.commonmodule.enums.OrderEnums;
 import com.ecommerceapp.commonmodule.saga.event.OrderCreatedEvent;
@@ -15,6 +18,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,6 +29,8 @@ import java.util.stream.Collectors;
 public class OrderService extends BaseService<Order, OrderDTO, OrderDTO, Long> {
     private final OrderRepository orderRepository;
     private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final NotificationService notificationService;
+    private final MailService mailService;
 
     @Override
     public BaseRepository<Order, Long> getRepository() {
@@ -43,6 +51,16 @@ public class OrderService extends BaseService<Order, OrderDTO, OrderDTO, Long> {
     public void postCreate(Order obj, OrderDTO input, OrderDTO output) throws RuntimeException {
         // Send order created event to Kafka
         kafkaTemplate.send("order-created", OrderCreatedEvent.builder().orderId(obj.getId()).productId(obj.getProductId()).build());
+
+        // Send notification of order created
+        notificationService.sendPushNotification(
+                NotificationMessageDTO.builder()
+                        .title("Order Created")
+                        .content("Your order has been created successfully.")
+                        .recipientId(obj.getCustomerId())
+                        .createdAt(Timestamp.from(Instant.now())).build()
+        );
+
     }
 
     public void cancelOrder(CancelOrderDTO dto) {

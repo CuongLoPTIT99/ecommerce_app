@@ -12,6 +12,7 @@ import {environment} from "../../../environments/environment";
 import {AuthService} from "../../services/auth.service";
 import {Client} from "@stomp/stompjs";
 import {NotificationService} from "../../services/notification.service";
+import {RealtimeService} from "../../services/realtime.service";
 
 @Component({
   selector: 'app-header',
@@ -31,33 +32,19 @@ import {NotificationService} from "../../services/notification.service";
 })
 export class HeaderComponent {
   @Output() menuToggled = new EventEmitter<void>();
-  private client: Client;
 
   constructor(
     private router: Router,
     private httpClient: HttpClient,
     private authService: AuthService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private realtimeService: RealtimeService
   ) {
-    this.client = new Client({
-      brokerURL: `ws://localhost:8080/ws`,
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
-    });
-    // receive notification
-    this.client.onConnect = () => {
-      console.log('Connected');
-      this.client.subscribe('/topic/notification', (message) => {
-        this.notificationService.showNotification(JSON.parse(message.body)?.content);
-      });
-    };
+    this.realtimeService.subscribeRealtimeData('notification', this.handleRealtimeData);
+  }
 
-    this.client.onStompError = (frame) => {
-      console.error('STOMP error', frame);
-    };
+  handleRealtimeData = () => {
 
-    this.client.activate();
   }
 
   toggleMenu(): void {

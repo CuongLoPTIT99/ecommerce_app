@@ -70,7 +70,7 @@ public class CustomerController {
         notificationService.sendPushNotification(NotificationMessageDTO.builder()
                 .title("Test Notification")
                 .content("This is a test notification")
-                .recipientId("12345")
+                .recipientId(123L)
                 .status(Enums.NotificationStatus.PENDING)
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build());
@@ -84,7 +84,7 @@ public class CustomerController {
         mailService.sendMail(MailItemDTO.builder()
                 .title("Test Notification")
                 .content("This is a test notification")
-                .recipientId("12345")
+                .recipientId(123L)
                 .status(Enums.NotificationStatus.PENDING)
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build());

@@ -30,12 +30,13 @@ public class ShipmentService extends BaseService<Shipment, ShipmentDTO, Shipment
         return ShipmentMapper.INSTANCE;
     }
 
-    @KafkaListener(topics = "order-created", groupId = "inventory-group")
-    private void reserveStock(OrderCreatedEvent event) {
-        Inventory inventory = inventoryRepository.findByProductId(event.getProductId()).orElse(null);
-        if (inventory != null) {
-            inventory.setQuantity(inventory.getQuantity() - event.getQuantity());
-            inventoryRepository.save(inventory);
-        }
+    @KafkaListener(topics = "order-created", groupId = "shipment-group")
+    private void listen2OrderCreated(OrderCreatedEvent event) {
+        create(event.getShipment());
+    }
+
+    @KafkaListener(topics = "order-failed", groupId = "shipment-group")
+    private void listen2OrderFailed(OrderCreatedEvent event) {
+        deleteById(event.getShipment().getId());
     }
 }

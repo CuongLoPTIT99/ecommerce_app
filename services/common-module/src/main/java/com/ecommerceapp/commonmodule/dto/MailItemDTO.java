@@ -17,8 +17,9 @@ import java.sql.Timestamp;
 public class MailItemDTO implements Serializable {
     private String title;
     private String content;
-    private String recipientId;
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+    private Long recipientId;
+    private String sendTo;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Enums.NotificationStatus status;
     private Timestamp createdAt;
 }
