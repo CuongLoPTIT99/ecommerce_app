@@ -17,5 +17,8 @@ public class Product implements BaseEntity<Long>, Serializable {
     private Long id;
     private String name;
     private String brand;
+    private String description;
+    private Double price;
+    private String imageUrl;
     private String status;
 }

@@ -1,23 +1,81 @@
-.spacer {
-  flex: 1 1 auto;
-}
-
-.logo {
-  margin-left: 8px;
-  text-decoration: none;
+/* Header Styles */
+.layout-topbar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
-  font-size: 1.5rem;
-  font-weight: 500;
+  padding: 0.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  height: 55px;
 }
 
+.layout-topbar-logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.logo-image {
+  height: 35px;
+  margin-right: 0.5rem;
+}
+
+.logo-text {
+  color: white;
+  font-size: 24px;
+  font-family: 'Writing Signature', sans-serif;
+}
+
+.layout-topbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.search-container {
+  min-width: 250px;
+}
+
+.search-input {
+  width: 100%;
+  border-radius: 20px;
+  padding: 0.5rem 0.75rem 0.5rem 2rem;
+  font-size: 0.9rem;
+}
+
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .logo {
-    font-size: 1.2rem;
+  .layout-topbar {
+    padding: 1rem;
+  }
+
+  .search-container {
+    min-width: 200px;
   }
 }
 
-.mat-snack-bar-container {
-  background-color: #4caf50; /* Green background */
-  color: white; /* White text */
-  font-size: 16px;
+@media (max-width: 480px) {
+  .layout-topbar-menu {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .search-container {
+    min-width: 150px;
+  }
+
+  .user-menu {
+    order: -1;
+  }
 }

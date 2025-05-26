@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProductRepository extends BaseRepository<Product, Long> {
-     @Query("SELECT new com.ecommerceapp.commonmodule.dto.ProductDTO(p.id, p.name, p.brand, p.status) FROM Product p")
+     @Query("SELECT new com.ecommerceapp.commonmodule.dto.ProductDTO(p.id, p.name, p.brand, p.description, p.price, p.imageUrl, p.status) FROM Product p")
      Page<ProductDTO> findAllByPaging(Pageable pageable);
 }

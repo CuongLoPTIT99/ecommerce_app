@@ -14,12 +14,18 @@ public interface ProductMapper extends BaseMapper<Product, ProductDTO, ProductDT
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "brand", target = "brand")
+    @Mapping(source = "description", target = "description")
+    @Mapping(source = "price", target = "price")
+    @Mapping(source = "imageUrl", target = "imageUrl")
     @Mapping(source = "status", target = "status")
     ProductDTO toDTO(Product product);
 
     @Mapping(source = "id", target = "id")
     @Mapping(source = "name", target = "name")
     @Mapping(source = "brand", target = "brand")
+    @Mapping(source = "description", target = "description")
+    @Mapping(source = "price", target = "price")
+    @Mapping(source = "imageUrl", target = "imageUrl")
     @Mapping(source = "status", target = "status")
     ProductDTO fromDTO(Product product);
 }

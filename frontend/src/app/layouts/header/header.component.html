@@ -1,74 +1,73 @@
-<mat-toolbar color="primary">
-  <button mat-icon-button (click)="toggleMenu()">
-    <mat-icon>menu</mat-icon>
-  </button>
-
-  <a routerLink="/" class="logo">
-    <span>{{ environment.appName }}</span>
-  </a>
-
-  <span class="spacer"></span>
-
-  <!-- Search -->
-  <button mat-icon-button aria-label="Search">
-    <mat-icon>search</mat-icon>
-  </button>
-
-  <!-- Categories -->
-  <button mat-button [matMenuTriggerFor]="categoriesMenu">
-    Categories
-    <mat-icon>arrow_drop_down</mat-icon>
-  </button>
-  <mat-menu #categoriesMenu="matMenu">
-    <button mat-menu-item routerLink="/product">Product</button>
-    <button mat-menu-item routerLink="/category/clothing">Clothing</button>
-    <button mat-menu-item routerLink="/category/home">Home & Kitchen</button>
-    <button mat-menu-item routerLink="/category/books">Books</button>
-  </mat-menu>
-
-  <!-- Cart -->
-  <button mat-icon-button aria-label="Shopping cart" routerLink="/cart">
-    <mat-icon matBadge="3" matBadgeColor="accent">shopping_cart</mat-icon>
-  </button>
-
-  <!-- Sign In -->
-  <button mat-icon-button aria-label="Sign In" (click)="redirect2Login()">
-    <mat-icon>person</mat-icon>
-  </button>
-
-  <button mat-icon-button aria-label="Sign In" (click)="redirect2Login1()">
-    <mat-icon>person</mat-icon>
-  </button>
-
-  <button mat-icon-button aria-label="Sign In" (click)="redirect2Login2()">
-    <mat-icon>person</mat-icon>
-  </button>
-
-  <button mat-icon-button aria-label="Sign In" (click)="redirect2Login3()">
-    <mat-icon>person</mat-icon>
-  </button>
-
-  <!-- User Menu -->
-  <button mat-icon-button [matMenuTriggerFor]="userMenu">
-    <mat-icon>account_circle</mat-icon>
-  </button>
-  <mat-menu #userMenu="matMenu">
-    <button mat-menu-item routerLink="/profile">
-      <mat-icon>person</mat-icon>
-      <span>Profile</span>
+<header class="layout-topbar">
+  <div class="layout-topbar-logo">
+    <button
+      pButton
+      type="button"
+      icon="pi pi-bars"
+      class="p-button-text p-button-rounded p-button-plain"
+      (click)="toggleSidebar()"
+      [style]="{ 'margin-right': '1rem' }">
     </button>
-    <button mat-menu-item routerLink="/orders">
-      <mat-icon>list_alt</mat-icon>
-      <span>Orders</span>
-    </button>
-    <button mat-menu-item routerLink="/wishlist">
-      <mat-icon>favorite</mat-icon>
-      <span>Wishlist</span>
-    </button>
-    <mat-divider></mat-divider>
-    <button mat-menu-item routerLink="/login">
-      <mat-icon>exit_to_app</mat-icon>
-      <span>Logout</span>
-    </button>
-  </mat-menu>
-</mat-toolbar>
+    <img
+      src="assets/logo-round.png"
+      alt="Image"
+      class="logo-image"/>
+    <span class="logo-text">Cuong Phung</span>
+  </div>
+
+  <div class="layout-topbar-menu">
+    <!-- Search Bar -->
+    <div class="search-container">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search"></i>
+              <input
+                type="text"
+                pInputText
+                placeholder="Search products..."
+                class="search-input"
+                [(ngModel)]="searchQuery" />
+            </span>
+    </div>
+
+    <!-- User Menu -->
+    <div class="user-menu">
+      <button
+        pButton
+        type="button"
+        [size]="'large'"
+        icon="pi pi-shopping-cart"
+        class="p-button-text p-button-rounded"
+      >
+      </button>
+
+      <button
+        pButton
+        type="button"
+        [size]="'large'"
+        icon="pi pi-heart"
+        class="p-button-text p-button-rounded"
+      >
+      </button>
+
+      <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
+      <button
+        pButton
+        type="button"
+        [size]="'large'"
+        icon="pi pi-user"
+        class="p-button-text p-button-rounded"
+        (click)="toggleUserMenu($event)">
+      </button>
+
+      <button
+        pButton
+        type="button"
+        [size]="'large'"
+        icon="pi pi-sign-in"
+        pTooltip="Sign in"
+        class="p-button-text p-button-rounded"
+      >
+      </button>
+    </div>
+  </div>
+</header>

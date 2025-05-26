@@ -16,13 +16,12 @@ export class ProductService extends BaseService {
   constructor(
     http: HttpClient,
     private router: Router,
-    private snackBar: MatSnackBar
   ) {
     super(http);
   }
 
   filterAndPaging(filterByName: string, page: number, size: number): Observable<any> {
-    return this.doGet(environment.productServiceUrl)
+    return this.doGet(`${environment.productServiceUrl}/list?page${page}&size=${size}&filterByName=${filterByName}`)
       .pipe(
         tap({
           next: (response) => {
@@ -32,8 +31,6 @@ export class ProductService extends BaseService {
           error: (error) => {
             // Handle error response
             console.error('Error retrieving product list:', error);
-            // Optionally, show an error message
-            this.snackBar.open('Error retrieving product list', 'Close', { duration: 2000 });
           }
         })
       );

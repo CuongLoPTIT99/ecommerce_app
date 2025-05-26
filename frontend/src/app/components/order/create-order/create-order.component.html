@@ -1,1 +1,47 @@
-<p>create-order works!</p>
+<div class="dialog-layout">
+  <div class="product-image-container">
+    <img [src]="product.imageUrl" [alt]="product.name" class="dialog-product-image">
+  </div>
+  <div class="product-details">
+    <p-floatLabel class="product-details-control">
+      <p-inputNumber
+        [ngModel]="product.price"
+        id="productPrice"
+        [disabled]="true"
+        mode="currency"
+        currency="USD"
+        locale="en-US" />
+      <label for="productPrice">Product price</label>
+    </p-floatLabel>
+
+
+    <p-floatLabel class="product-details-control">
+      <p-inputNumber
+        [(ngModel)]="quantity"
+        [min]="1"
+        class="quantity-value"
+        [showButtons]="true"
+        inputId="horizontal"
+        id="quantity"
+      />
+      <label for="quantity">Quantity</label>
+    </p-floatLabel>
+
+    <p-floatLabel class="product-details-control">
+      <p-inputNumber
+        [ngModel]="product.price*quantity"
+        id="totalAmount"
+        mode="currency"
+        [disabled]="true"
+        [inputStyle]="{'color': 'red'}"
+        currency="USD"
+        locale="en-US" />
+      <label for="totalAmount">Total amount</label>
+    </p-floatLabel>
+  </div>
+</div>
+<div class="flex justify-content-end gap-2" [style]="{'margin-top': '1.5rem'}">
+  <p-button label="Cancel" [rounded]="true" icon="pi pi-times-circle" severity="danger" (click)="onCancel()"/>
+  <p-button label="Buy now" [rounded]="true" icon="pi pi-shopping-bag" severity="success" (click)="handleBuyNow()"/>
+</div>
+

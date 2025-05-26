@@ -1,26 +1,30 @@
-import {Component} from '@angular/core';
-import {MatDialog, MatDialogActions, MatDialogContent, MatDialogTitle} from "@angular/material/dialog";
-import {MatIcon} from "@angular/material/icon";
-import {MatButton, MatIconButton} from "@angular/material/button";
+import {Component, EventEmitter, Output} from '@angular/core';
 import {Product} from "../../../models/product.model";
 import {CartService} from "../../../services/cart.service";
-import {environment} from "../../../../environments/environment";
+import {FormsModule} from "@angular/forms";
+import {InputNumberModule} from "primeng/inputnumber";
+import {FloatLabelModule} from "primeng/floatlabel";
+import {ButtonGroupModule} from "primeng/buttongroup";
+import {Button} from "primeng/button";
+import {ToastModule} from "primeng/toast";
 
 @Component({
   selector: 'create-cart',
   standalone: true,
   imports: [
-    MatDialogContent,
-    MatIcon,
-    MatDialogActions,
-    MatButton,
-    MatIconButton,
-    MatDialogTitle
+    FormsModule,
+    InputNumberModule,
+    FloatLabelModule,
+    ButtonGroupModule,
+    Button,
+    ToastModule
   ],
   templateUrl: './create-cart.component.html',
   styleUrl: './create-cart.component.scss'
 })
 export class CreateCartComponent {
+  @Output() emitCloseAction: EventEmitter<any> = new EventEmitter();
+
   quantity:any = 1;
   product: Product = {
     id: 1,
@@ -31,13 +35,12 @@ export class CreateCartComponent {
   };
 
   constructor(
-    private dialog: MatDialog,
     private cartService: CartService,
   ) {
   }
 
   onCancel() {
-    this.dialog.closeAll();
+    this.emitCloseAction.emit();
   }
 
   onSubmit() {
@@ -45,21 +48,19 @@ export class CreateCartComponent {
     // this.dialogActions.close();
   }
 
-  decrementQuantity() {
-    if (this.quantity <= 1) {
-      return;
-    }
-    this.quantity--;
-  }
+  changeQuantity() {
+    console.log('Quantity changed:', this.quantity);
+    if (this.quantity === null || this.quantity === undefined || this.quantity === '' || this.quantity < 1) {
 
-  incrementQuantity() {
-    this.quantity++;
+      this.quantity = 1;
+      console.log('alo:', this.quantity);
+    }
   }
 
   addToCart() {
     this.cartService.addToCart({} as any).subscribe({
       next: (response)=> {
-        this.dialog.closeAll()
+        this.emitCloseAction.emit();
       }
     })
   }

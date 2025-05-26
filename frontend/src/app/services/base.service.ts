@@ -13,6 +13,10 @@ export class BaseService {
   protected headers: HttpHeaders = new HttpHeaders({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'credentials': 'false'
   });
 
   constructor(
@@ -30,7 +34,7 @@ export class BaseService {
   }
 
   protected doGet(url: string): Observable<any> {
-    return this.http.post<any>(url, { headers: this.headers });
+    return this.http.get<any>(url, { headers: this.headers });
   }
 
   protected doPut(url: string): Observable<any> {
