@@ -12,31 +12,38 @@ import {environment} from "../../../environments/environment";
 import {AuthService} from "../../services/auth.service";
 import {NotificationService} from "../../services/notification.service";
 import {RealtimeService} from "../../services/realtime.service";
-import {ButtonDirective} from "primeng/button";
+import {Button, ButtonDirective} from "primeng/button";
 import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {Menu, MenuModule} from "primeng/menu";
 import {TooltipModule} from "primeng/tooltip";
 import {MenuItem} from "primeng/api";
+import {CreateOrderComponent} from "../../components/order/create-order/create-order.component";
+import {DialogModule} from "primeng/dialog";
+import {ViewOrderComponent} from "../../components/order/view-order/view-order.component";
 
 @Component({
   selector: 'app-header',
   standalone: true,
-    imports: [
-        CommonModule,
-        RouterModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatButtonModule,
-        MatBadgeModule,
-        MatMenuModule,
-        MatDividerModule,
-        ButtonDirective,
-        FormsModule,
-        InputTextModule,
-        MenuModule,
-        TooltipModule
-    ],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatBadgeModule,
+    MatMenuModule,
+    MatDividerModule,
+    ButtonDirective,
+    FormsModule,
+    InputTextModule,
+    MenuModule,
+    TooltipModule,
+    Button,
+    CreateOrderComponent,
+    DialogModule,
+    ViewOrderComponent
+  ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -48,6 +55,8 @@ export class HeaderComponent {
   searchQuery = '';
   cartCount = 3;
   wishlistCount = 5;
+
+  visibleMyCart = false;
 
   constructor(
     private router: Router,
@@ -107,6 +116,18 @@ export class HeaderComponent {
     }, 0);
   }
 
+  handleLogin(){
+    // this.menu.toggle(event);
+    // setTimeout(() => {
+    //   const menuEl = document.querySelector('.p-menu.p-menu-overlay') as HTMLElement;
+    //   if (menuEl) {
+    //     menuEl.style.position = 'fixed';
+    //     menuEl.style.top = '46px';
+    //     menuEl.style.right = '40px';
+    //   }
+    // }, 0);
+  }
+
   handleRealtimeData = () => {
 
   }
@@ -147,6 +168,11 @@ export class HeaderComponent {
   redirect2Login3(): void {
     this.authService.getUserInfo1();
   }
+
+  closeCreateOrderDialog() {
+    this.visibleMyCart = false;
+  }
+
 
 
 

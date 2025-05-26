@@ -37,6 +37,8 @@
         [size]="'large'"
         icon="pi pi-shopping-cart"
         class="p-button-text p-button-rounded"
+        pTooltip="Cart"
+        (click)="this.visibleMyCart = true"
       >
       </button>
 
@@ -44,8 +46,19 @@
         pButton
         type="button"
         [size]="'large'"
-        icon="pi pi-heart"
+        icon="pi pi-shopping-bag"
         class="p-button-text p-button-rounded"
+        pTooltip="Order"
+      >
+      </button>
+
+      <button
+        pButton
+        type="button"
+        [size]="'large'"
+        icon="pi pi-bell"
+        class="p-button-text p-button-rounded"
+        pTooltip="Notification"
       >
       </button>
 
@@ -56,18 +69,17 @@
         [size]="'large'"
         icon="pi pi-user"
         class="p-button-text p-button-rounded"
-        (click)="toggleUserMenu($event)">
+        (click)="toggleUserMenu($event)" pTooltip="User info">
       </button>
 
-      <button
-        pButton
-        type="button"
-        [size]="'large'"
-        icon="pi pi-sign-in"
-        pTooltip="Sign in"
-        class="p-button-text p-button-rounded"
-      >
-      </button>
+      <p-button label="Sign in"
+                icon="pi pi-sign-in"
+                [rounded]="true"
+                severity="success"
+                (click)="handleLogin()"/>
     </div>
   </div>
 </header>
+<p-dialog header="My cart" [modal]="true" [(visible)]="visibleMyCart" [style]="{ width: '40rem', height: '41rem' }">
+  <view-order (emitCloseAction)="closeCreateOrderDialog()"></view-order>
+</p-dialog>

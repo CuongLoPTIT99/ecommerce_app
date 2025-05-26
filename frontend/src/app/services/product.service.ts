@@ -21,7 +21,7 @@ export class ProductService extends BaseService {
   }
 
   filterAndPaging(filterByName: string, page: number, size: number): Observable<any> {
-    return this.doGet(`${environment.productServiceUrl}/list?page${page}&size=${size}&filterByName=${filterByName}`)
+    return this.doGet(`${environment.productServiceUrl}/list?page=${page}&size=${size}&filterByName=${filterByName}`)
       .pipe(
         tap({
           next: (response) => {

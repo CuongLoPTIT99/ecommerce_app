@@ -7,6 +7,9 @@ import {FloatLabelModule} from "primeng/floatlabel";
 import {ButtonGroupModule} from "primeng/buttongroup";
 import {Button} from "primeng/button";
 import {ToastModule} from "primeng/toast";
+import {AccordionModule} from "primeng/accordion";
+import {PanelModule} from "primeng/panel";
+import {ShipmentComponent} from "../../shipment/shipment.component";
 
 @Component({
   selector: 'create-order',
@@ -17,7 +20,10 @@ import {ToastModule} from "primeng/toast";
     FloatLabelModule,
     ButtonGroupModule,
     Button,
-    ToastModule
+    ToastModule,
+    AccordionModule,
+    PanelModule,
+    ShipmentComponent
   ],
   templateUrl: './create-order.component.html',
   styleUrl: './create-order.component.scss'

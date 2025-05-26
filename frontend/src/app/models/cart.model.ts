@@ -1,4 +1,3 @@
-// user.model.ts
 export interface Cart {
   id?: number;
   customerId?: number;
