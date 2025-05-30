@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface OrderMapper extends BaseMapper<Order, OrderDTO, OrderDTO> {
     OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
@@ -29,7 +29,7 @@ public interface OrderMapper extends BaseMapper<Order, OrderDTO, OrderDTO> {
     @Mapping(source = "cancelReason", target = "cancelReason")
     Order fromDTO(OrderDTO dto);
 
-    @Mapping(source = "id", target = "id")
+    @Mapping(source = "orderId", target = "id")
     @Mapping(source = "cancelReason", target = "cancelReason")
     Order fromCancelOrderDTO(CancelOrderDTO dto);
 }

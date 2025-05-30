@@ -21,6 +21,7 @@ import {MenuItem} from "primeng/api";
 import {CreateOrderComponent} from "../../components/order/create-order/create-order.component";
 import {DialogModule} from "primeng/dialog";
 import {ViewOrderComponent} from "../../components/order/view-order/view-order.component";
+import {ViewCartComponent} from "../../components/cart/view-cart/view-cart.component";
 
 @Component({
   selector: 'app-header',
@@ -42,7 +43,8 @@ import {ViewOrderComponent} from "../../components/order/view-order/view-order.c
     Button,
     CreateOrderComponent,
     DialogModule,
-    ViewOrderComponent
+    ViewOrderComponent,
+    ViewCartComponent
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -57,6 +59,7 @@ export class HeaderComponent {
   wishlistCount = 5;
 
   visibleMyCart = false;
+  visibleMyOrder = false;
 
   constructor(
     private router: Router,
@@ -169,8 +172,12 @@ export class HeaderComponent {
     this.authService.getUserInfo1();
   }
 
-  closeCreateOrderDialog() {
+  closeViewMyCartDialog() {
     this.visibleMyCart = false;
+  }
+
+  closeViewMyOrderDialog() {
+    this.visibleMyOrder = false;
   }
 
 

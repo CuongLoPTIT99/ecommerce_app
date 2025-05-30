@@ -49,6 +49,7 @@
         icon="pi pi-shopping-bag"
         class="p-button-text p-button-rounded"
         pTooltip="Order"
+        (click)="this.visibleMyOrder = true"
       >
       </button>
 
@@ -80,6 +81,11 @@
     </div>
   </div>
 </header>
+
 <p-dialog header="My cart" [modal]="true" [(visible)]="visibleMyCart" [style]="{ width: '40rem', height: '41rem' }">
-  <view-order (emitCloseAction)="closeCreateOrderDialog()"></view-order>
+  <view-cart (emitCloseAction)="closeViewMyCartDialog()"></view-cart>
+</p-dialog>
+
+<p-dialog header="My order" [modal]="true" [(visible)]="visibleMyOrder" [style]="{ width: '40rem', height: '41rem' }">
+  <view-order (emitCloseAction)="closeViewMyOrderDialog()"></view-order>
 </p-dialog>

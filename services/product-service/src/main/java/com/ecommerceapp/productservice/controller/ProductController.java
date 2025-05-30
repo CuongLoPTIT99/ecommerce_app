@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/product")
 @RequiredArgsConstructor
@@ -22,5 +24,12 @@ public class ProductController {
             @RequestParam(defaultValue = "asc") String sortType
     ) {
         return productService.filterAndPaging(filterByName, page, size, sortBy, sortType);
+    }
+
+    @GetMapping("/getByListId")
+    public List<ProductDTO> getByListId(
+            @RequestBody List<Long> productIds
+    ) {
+        return productService.getByListId(productIds);
     }
 }

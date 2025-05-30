@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class PaymentService extends BaseService<Payment, PaymentDTO, PaymentDTO, Long> {
     private final PaymentRepository paymentRepository;
+    private final PaymentMapper paymentMapper;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
@@ -30,13 +31,14 @@ public class PaymentService extends BaseService<Payment, PaymentDTO, PaymentDTO,
 
     @Override
     public BaseMapper<Payment, PaymentDTO, PaymentDTO> getMapper() {
-        return PaymentMapper.INSTANCE;
+        return paymentMapper;
     }
 
     @Override
-    public void postCreate(Payment obj, PaymentDTO input, PaymentDTO output) throws RuntimeException {
+    public PaymentDTO postCreate(Payment obj, PaymentDTO input, PaymentDTO output) throws RuntimeException {
         // Send order created event to Kafka
         kafkaTemplate.send("payment-completed", PaymentCompletedEvent.builder().orderId(obj.getOrderId()).build());
+        return output;
     }
 
     @Override

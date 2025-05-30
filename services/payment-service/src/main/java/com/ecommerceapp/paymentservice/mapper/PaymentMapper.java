@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface PaymentMapper extends BaseMapper<Payment, PaymentDTO, PaymentDTO> {
     PaymentMapper INSTANCE = Mappers.getMapper(PaymentMapper.class);
 

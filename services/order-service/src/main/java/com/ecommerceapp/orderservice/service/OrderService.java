@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class OrderService extends BaseService<Order, OrderDTO, OrderDTO, Long> {
     private final OrderRepository orderRepository;
+    private final OrderMapper orderMapper;
     private final KafkaTemplate<String, Object> kafkaTemplate;
     private final NotificationService notificationService;
     private final MailService mailService;
@@ -39,7 +40,7 @@ public class OrderService extends BaseService<Order, OrderDTO, OrderDTO, Long> {
 
     @Override
     public BaseMapper<Order, OrderDTO, OrderDTO> getMapper() {
-        return OrderMapper.INSTANCE;
+        return orderMapper;
     }
 
     public List<OrderDTO> getByCustomerId(Long customerId) {
@@ -48,7 +49,7 @@ public class OrderService extends BaseService<Order, OrderDTO, OrderDTO, Long> {
     }
 
     @Override
-    public void postCreate(Order obj, OrderDTO input, OrderDTO output) throws RuntimeException {
+    public OrderDTO postCreate(Order obj, OrderDTO input, OrderDTO output) throws RuntimeException {
         // Send order created event to Kafka
         kafkaTemplate.send("order-created", OrderCreatedEvent.builder().orderId(obj.getId()).productId(obj.getProductId()).build());
 
@@ -60,7 +61,7 @@ public class OrderService extends BaseService<Order, OrderDTO, OrderDTO, Long> {
                         .recipientId(obj.getCustomerId())
                         .createdAt(Timestamp.from(Instant.now())).build()
         );
-
+        return output;
     }
 
     public void cancelOrder(CancelOrderDTO dto) {

@@ -7,6 +7,8 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 import {Cart} from "../models/cart.model";
 import {BaseService} from "./base.service";
 import {Order} from "../models/order.model";
+import {MessageService} from "primeng/api";
+import {Observable, tap} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -15,46 +17,37 @@ export class OrderService extends BaseService {
 
   constructor(
     http: HttpClient,
-    private router: Router,
-    private snackBar: MatSnackBar
+    private messageService: MessageService
   ) {
     super(http);
   }
 
-  createOrder(order: Order) {
-    this.doPost(`${environment.cartServiceUrl}`, order).subscribe({
-      next: (response)=> {
-        // Handle success response
-        console.log('Order created:', response);
-        // Optionally, show a success message or navigate to the cart page
-        this.snackBar.open('Order created!', 'Close', {duration: 2000});
-      },
-      error: (error) => {
-        // Handle error response
-        console.error('Error creating order:', error);
-        // Optionally, show an error message
-        this.snackBar.open('Error creating order', 'Close', {duration: 2000});
-      }
-    })
+  createOrder(order: Order): Observable<any> {
+    return this.doPost(`${environment.cartServiceUrl}`, order).pipe(
+      tap({
+        next: (response)=> {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Order created successfully!'});
+        },
+        error: (error) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error creating order'});
+        }
+      })
+    );
   }
 
-  cancelOrder(orderId: number, cancelReason: string) {
-    this.doPost(`${environment.cartServiceUrl}/cancel`, {
+  cancelOrder(orderId: number, cancelReason: string): Observable<any> {
+    return this.doPost(`${environment.cartServiceUrl}/cancel`, {
       orderId: orderId,
       cancelReason: cancelReason
-    }).subscribe({
-      next: (response)=> {
-        // Handle success response
-        console.log('Order cancelled:', response);
-        // Optionally, show a success message or navigate to the cart page
-        this.snackBar.open('Order cancelled!', 'Close', {duration: 2000});
-      },
-      error: (error) => {
-        // Handle error response
-        console.error('Error cancelling order:', error);
-        // Optionally, show an error message
-        this.snackBar.open('Error cancelling order', 'Close', {duration: 2000});
-      }
-    })
+    }).pipe(
+      tap({
+        next: (response)=> {
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Order cancelled successfully!'});
+        },
+        error: (error) => {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error cancelling order'});
+        }
+      })
+    );
   }
 }

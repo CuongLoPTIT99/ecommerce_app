@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,4 +25,6 @@ public class Cart implements BaseEntity<Long>, Serializable {
     private Integer quantity;
     @Column(name = "total_price")
     private Double totalPrice;
+    @Column(name = "create_at")
+    private Timestamp createAt;
 }

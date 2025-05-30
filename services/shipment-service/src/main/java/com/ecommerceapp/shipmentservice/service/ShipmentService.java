@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ShipmentService extends BaseService<Shipment, ShipmentDTO, ShipmentDTO, Long> {
     private final ShipmentRepository shipmentRepository;
+    private final ShipmentMapper shipmentMapper;
 
     @Override
     public BaseRepository<Shipment, Long> getRepository() {
@@ -27,7 +28,7 @@ public class ShipmentService extends BaseService<Shipment, ShipmentDTO, Shipment
 
     @Override
     public BaseMapper<Shipment, ShipmentDTO, ShipmentDTO> getMapper() {
-        return ShipmentMapper.INSTANCE;
+        return shipmentMapper;
     }
 
     @KafkaListener(topics = "order-created", groupId = "shipment-group")

@@ -20,8 +20,8 @@ export class ProductService extends BaseService {
     super(http);
   }
 
-  filterAndPaging(filterByName: string, page: number, size: number): Observable<any> {
-    return this.doGet(`${environment.productServiceUrl}/list?page=${page}&size=${size}&filterByName=${filterByName}`)
+  filterAndPaging(filterByName: string, page: number, size: number, sortBy: string = '', sortType: string = ''): Observable<any> {
+    return this.doGet(`${environment.productServiceUrl}/list?filterByName=${filterByName}&page=${page}&size=${size}&sortBy=${sortBy}&sortType=${sortType}`)
       .pipe(
         tap({
           next: (response) => {

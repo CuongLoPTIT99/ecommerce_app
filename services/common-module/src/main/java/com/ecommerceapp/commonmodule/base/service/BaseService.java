@@ -20,10 +20,10 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
         S output;
         try {
             obj = getMapper().fromDTO(input);
-            preCreate(obj, input);
+            obj = preCreate(obj, input);
             getRepository().save(obj);
             output = getMapper().toDTO(obj);
-            postCreate(obj, input, output);
+            output = postCreate(obj, input, output);
         } catch (Exception e) {
             log.error("Error while adding object to DB", e);
             throw new RuntimeException("Error while adding object to DB", e);
@@ -89,9 +89,13 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
                 .toList();
     }
 
-    public void preCreate(T obj, R input) throws RuntimeException {}
+    public T preCreate(T obj, R input) throws RuntimeException {
+        return obj;
+    }
 
-    public void postCreate(T obj, R input, S output) throws RuntimeException {}
+    public S postCreate(T obj, R input, S output) throws RuntimeException {
+        return output;
+    }
 
     public void preUpdate(T obj, R input) throws RuntimeException {}
 

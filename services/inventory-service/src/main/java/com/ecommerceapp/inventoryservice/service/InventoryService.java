@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class InventoryService extends BaseService<Inventory, InventoryDTO, InventoryDTO, Long> {
     private final InventoryRepository inventoryRepository;
+    private final InventoryMapper inventoryMapper;
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
@@ -33,13 +34,14 @@ public class InventoryService extends BaseService<Inventory, InventoryDTO, Inven
 
     @Override
     public BaseMapper<Inventory, InventoryDTO, InventoryDTO> getMapper() {
-        return InventoryMapper.INSTANCE;
+        return inventoryMapper;
     }
 
     @Override
-    public void postCreate(Inventory obj, InventoryDTO input, InventoryDTO output) throws RuntimeException {
+    public InventoryDTO postCreate(Inventory obj, InventoryDTO input, InventoryDTO output) throws RuntimeException {
         // Send order created event to Kafka
         kafkaTemplate.send("inventory-reserved", InventoryReservedEvent.builder().orderId(obj.getId()).build());
+        return output;
     }
 
     @Override
