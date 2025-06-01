@@ -1,12 +1,15 @@
 package com.ecommerceapp.commonmodule.network.api;
 
+import com.ecommerceapp.commonmodule.dto.ProductDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -21,61 +24,44 @@ public class WebClientAPIService implements APIService {
     }
 
     @Override
-    public <T> T get(String url, Class<T> responseType) throws Exception {
-        try {
-            return webClient.get()
-                    .uri(url)
-                    .retrieve()
-                    .bodyToMono(responseType)
-                    .block(); // Synchronous
-        } catch (WebClientResponseException ex) {
-            // log error or rethrow custom exception
-//            log.info(ex.getMessage());
-            throw ex;
-        }
+    public <T> T get(String url, ParameterizedTypeReference<T> responseType) {
+        return webClient.get()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(responseType)
+                .doOnError(ex -> log.error("Error during GET request: {}", ex.getMessage()))
+                .block();
     }
 
     @Override
-    public <T> T post(String url, Map<String, Object> requestBody, Class<T> responseType) throws Exception {
-        try {
-            return webClient.post()
-                    .uri(url)
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(responseType)
-                    .block();
-        } catch (WebClientResponseException ex) {
-//            logger.error(ex.getMessage());
-            throw ex;
-        }
+    public <T> T post(String url, Map<String, Object> requestBody, ParameterizedTypeReference<T> responseType) {
+        return webClient.post()
+                .uri(url)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(responseType)
+                .doOnError(ex -> log.error("Error during POST request: {}", ex.getMessage()))
+                .block();
     }
 
     @Override
-    public <T> T put(String url, Map<String, Object> requestBody, Class<T> responseType) throws Exception {
-        try {
-            return webClient.post()
-                    .uri(url)
-                    .bodyValue(requestBody)
-                    .retrieve()
-                    .bodyToMono(responseType)
-                    .block();
-        } catch (WebClientResponseException ex) {
-//            logger.error(ex.getMessage());
-            throw ex;
-        }
+    public <T> T put(String url, Map<String, Object> requestBody, ParameterizedTypeReference<T> responseType) {
+        return webClient.post()
+                .uri(url)
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(responseType)
+                .doOnError(ex -> log.error("Error during PUT request: {}", ex.getMessage()))
+                .block();
     }
 
     @Override
-    public void delete(String url) throws Exception {
-        try {
-            webClient.delete()
-                    .uri(url)
-                    .retrieve()
-                    .bodyToMono(Void.class)
-                    .block();
-        } catch (WebClientResponseException ex) {
-//            logger.error(ex.getMessage());
-            throw ex;
-        }
+    public void delete(String url) {
+        webClient.delete()
+                .uri(url)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .doOnError(ex -> log.error("Error during DELETE request: {}", ex.getMessage()))
+                .block();
     }
 }
