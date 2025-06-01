@@ -16,7 +16,7 @@ public interface CartMapper extends BaseMapper<Cart, CartDTO, CartDTO> {
     @Mapping(source = "productId", target = "productId")
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "totalPrice", target = "totalPrice")
-    @Mapping(source = "createAt", target = "createAt")
+    @Mapping(source = "createdAt", target = "createdAt")
     CartDTO toDTO(Cart cart);
 
     @Mapping(source = "id", target = "id")
@@ -24,6 +24,6 @@ public interface CartMapper extends BaseMapper<Cart, CartDTO, CartDTO> {
     @Mapping(source = "productId", target = "productId")
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "totalPrice", target = "totalPrice")
-    @Mapping(source = "createAt", target = "createAt")
+    @Mapping(source = "createdAt", target = "createdAt")
     Cart fromDTO(CartDTO dto);
 }

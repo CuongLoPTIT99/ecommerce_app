@@ -37,8 +37,8 @@ export class BaseService {
     return this.http.get<any>(url, { headers: this.headers });
   }
 
-  protected doPut(url: string): Observable<any> {
-    return this.http.put<any>(url, { headers: this.headers });
+  protected doPut(url: string, data: any): Observable<any> {
+    return this.http.put<any>(url, data, { headers: this.headers });
   }
 
   protected doDelete(url: string): Observable<any> {

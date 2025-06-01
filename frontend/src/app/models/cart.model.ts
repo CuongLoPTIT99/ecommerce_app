@@ -1,7 +1,9 @@
+import {Product} from "./product.model";
+
 export interface Cart {
   id?: number;
   customerId?: number;
   productId?: number;
   quantity?: number;
-  totalPrice?: number;
+  product?: Product;
 }

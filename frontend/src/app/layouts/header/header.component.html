@@ -1,3 +1,4 @@
+<p-toast/>
 <header class="layout-topbar">
   <div class="layout-topbar-logo">
     <button
@@ -83,9 +84,21 @@
 </header>
 
 <p-dialog header="My cart" [modal]="true" [(visible)]="visibleMyCart" [style]="{ width: '40rem', height: '41rem' }">
-  <view-cart (emitCloseAction)="closeViewMyCartDialog()"></view-cart>
+  @if (visibleMyCart) {
+    <view-cart (emitCloseAction)="closeViewMyCartDialog()"
+               (emitCreateOrder)="openCreateOrder($event)"
+    ></view-cart>
+  }
+</p-dialog>
+
+<p-dialog [header]="order2Buy?.product?.name" [modal]="true" [(visible)]="visibleCreateOrder" [style]="{ width: '40rem', height: '41rem' }">
+  @if (visibleCreateOrder) {
+    <create-order [order]="order2Buy" (emitCloseAction)="closeCreateOrderDialog()"></create-order>
+  }
 </p-dialog>
 
 <p-dialog header="My order" [modal]="true" [(visible)]="visibleMyOrder" [style]="{ width: '40rem', height: '41rem' }">
-  <view-order (emitCloseAction)="closeViewMyOrderDialog()"></view-order>
+  @if (visibleMyOrder) {
+    <view-order (emitCloseAction)="closeViewMyOrderDialog()"></view-order>
+  }
 </p-dialog>

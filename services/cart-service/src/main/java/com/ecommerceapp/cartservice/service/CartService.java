@@ -4,15 +4,14 @@ import com.ecommerceapp.cartservice.entity.Cart;
 import com.ecommerceapp.cartservice.mapper.CartMapper;
 import com.ecommerceapp.cartservice.repository.CartRepository;
 import com.ecommerceapp.commonmodule.base.mapper.BaseMapper;
-import com.ecommerceapp.commonmodule.base.repository.BaseRepository;
 import com.ecommerceapp.commonmodule.base.service.BaseService;
 import com.ecommerceapp.commonmodule.dto.CartDTO;
+import com.ecommerceapp.commonmodule.dto.ProductDTO;
+import com.ecommerceapp.commonmodule.network.api.service.APIProductService;
 import com.ecommerceapp.commonmodule.util.CommonUtil;
+import com.ecommerceapp.commonmodule.util.DateTimeUtil;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +27,7 @@ import java.util.stream.Collectors;
 public class CartService extends BaseService<Cart, CartDTO, CartDTO, Long> {
     private final CartRepository cartRepository;
     private final CartMapper cartMapper;
+    private final APIProductService apiProductService;
     @Override
     public CartRepository getRepository() {
         return cartRepository;
@@ -42,7 +42,16 @@ public class CartService extends BaseService<Cart, CartDTO, CartDTO, Long> {
         if (!CommonUtil.isNullOrEmpty(cart)) {
             obj = cart.get(0);
             obj.setQuantity(obj.getQuantity() + input.getQuantity());
+        } else {
+            // set created time if create first time
+            obj.setCreatedAt(DateTimeUtil.getCurrentTimeStamp());
         }
+        return obj;
+    }
+
+    @Override
+    public Cart preUpdate(Cart obj, Cart current, CartDTO input) throws RuntimeException {
+        BeanUtils.copyProperties(current, obj, "quantity");
         return obj;
     }
 
@@ -52,9 +61,25 @@ public class CartService extends BaseService<Cart, CartDTO, CartDTO, Long> {
     }
 
     public Page<CartDTO> getByCustomerIdAndPaging(Long customerId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createAt").descending());
-        List<Long> productIds = cartRepository.findByCustomerIdAndPaging(pageable, customerId).getContent().stream()
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<CartDTO> cartPage = cartRepository.findByCustomerIdAndPaging(pageable, customerId);
+        List<Long> productIds = cartPage.getContent().stream()
                 .map(CartDTO::getProductId).collect(Collectors.toList());
-        return cartRepository.findByCustomerIdAndPaging(pageable, customerId);
+
+        // get list product by list id
+        List<ProductDTO> productDTOList = apiProductService.getByListId(productIds);
+
+        // set product to cartDTO
+        if (!CommonUtil.isNullOrEmpty(productDTOList)) {
+            productDTOList.stream().forEach(productDTO -> {
+                Optional<CartDTO> cartDTO = cartPage.getContent().stream()
+                        .filter(c -> c.getProductId().equals(productDTO.getId())).findFirst();
+                if (cartDTO.isPresent()) {
+                    cartDTO.get().setProduct(productDTO);
+                }
+            });
+        }
+
+        return cartPage;
     }
 }

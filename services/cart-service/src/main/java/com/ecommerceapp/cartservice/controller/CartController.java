@@ -1,13 +1,10 @@
 package com.ecommerceapp.cartservice.controller;
 
-import com.ecommerceapp.cartservice.entity.Cart;
 import com.ecommerceapp.cartservice.service.CartService;
 import com.ecommerceapp.commonmodule.dto.CartDTO;
-import com.ecommerceapp.commonmodule.dto.ProductDTO;
 import com.ecommerceapp.commonmodule.network.api.ResponseWrapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

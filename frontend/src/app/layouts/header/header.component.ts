@@ -17,11 +17,14 @@ import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {Menu, MenuModule} from "primeng/menu";
 import {TooltipModule} from "primeng/tooltip";
-import {MenuItem} from "primeng/api";
+import {MenuItem, MessageService} from "primeng/api";
 import {CreateOrderComponent} from "../../components/order/create-order/create-order.component";
 import {DialogModule} from "primeng/dialog";
 import {ViewOrderComponent} from "../../components/order/view-order/view-order.component";
 import {ViewCartComponent} from "../../components/cart/view-cart/view-cart.component";
+import {ToastModule} from "primeng/toast";
+import {Cart} from "../../models/cart.model";
+import {Order} from "../../models/order.model";
 
 @Component({
   selector: 'app-header',
@@ -44,7 +47,8 @@ import {ViewCartComponent} from "../../components/cart/view-cart/view-cart.compo
     CreateOrderComponent,
     DialogModule,
     ViewOrderComponent,
-    ViewCartComponent
+    ViewCartComponent,
+    ToastModule
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -59,7 +63,10 @@ export class HeaderComponent {
   wishlistCount = 5;
 
   visibleMyCart = false;
+  visibleCreateOrder = false;
   visibleMyOrder = false;
+
+  order2Buy: Order | null = null;
 
   constructor(
     private router: Router,
@@ -164,16 +171,21 @@ export class HeaderComponent {
     })
   }
 
-  redirect2Login2(): void {
-    this.authService.getUserInfo();
-  }
-
-  redirect2Login3(): void {
-    this.authService.getUserInfo1();
+  openCreateOrder(cart: Cart) {
+    this.order2Buy = {
+      product: cart.product,
+      quantity: cart.quantity
+    }
+    this.visibleCreateOrder= true;
   }
 
   closeViewMyCartDialog() {
+    console.log('closeViewMyCartDialog');
     this.visibleMyCart = false;
+  }
+
+  closeCreateOrderDialog() {
+    this.visibleCreateOrder = false;
   }
 
   closeViewMyOrderDialog() {

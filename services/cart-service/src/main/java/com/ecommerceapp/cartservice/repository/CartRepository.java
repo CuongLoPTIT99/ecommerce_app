@@ -15,7 +15,7 @@ import java.util.List;
 public interface CartRepository extends BaseRepository<Cart, Long>  {
     List<Cart> findByCustomerId(Long customerId);
     List<Cart> findByCustomerIdAndProductId(Long customerId, Long productId);
-    @Query("SELECT new com.ecommerceapp.commonmodule.dto.CartDTO(c.id, c.customerId, c.productId, c.quantity, c.totalPrice, c.createAt) FROM Cart c " +
+    @Query("SELECT new com.ecommerceapp.commonmodule.dto.CartDTO(c.id, c.customerId, c.productId, c.quantity, c.totalPrice, c.createdAt) FROM Cart c " +
             "where c.customerId = :customerId")
     Page<CartDTO> findByCustomerIdAndPaging(Pageable pageable, Long customerId);
 }

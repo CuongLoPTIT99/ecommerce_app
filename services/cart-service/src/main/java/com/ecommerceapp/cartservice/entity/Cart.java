@@ -25,6 +25,6 @@ public class Cart implements BaseEntity<Long>, Serializable {
     private Integer quantity;
     @Column(name = "total_price")
     private Double totalPrice;
-    @Column(name = "create_at")
-    private Timestamp createAt;
+    @Column(name = "created_at")
+    private Timestamp createdAt;
 }

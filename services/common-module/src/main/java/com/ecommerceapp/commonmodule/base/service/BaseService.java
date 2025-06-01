@@ -38,11 +38,11 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
             obj = getMapper().fromDTO(input);
             current = getRepository().findById((Tid) obj.getId()).orElse(null);
             if (current == null) throw new RuntimeException("Data is not exist in DB");
-            preUpdate(current, input);
+            obj = preUpdate(obj, current, input);
             BeanUtils.copyProperties(obj, current, "id", "createdAt", "createdBy");
             getRepository().save(current);
             output = getMapper().toDTO(current);
-            postUpdate(current, input, output);
+            output = postUpdate(current, input, output);
         } catch (Exception e) {
             log.error("Error while editing object to DB", e);
             throw new RuntimeException("Error while editing object to DB", e);
@@ -97,9 +97,13 @@ public abstract class BaseService<T extends BaseEntity, R extends Object, S exte
         return output;
     }
 
-    public void preUpdate(T obj, R input) throws RuntimeException {}
+    public T preUpdate(T obj, T current, R input) throws RuntimeException {
+        return obj;
+    }
 
-    public void postUpdate(T obj, R input, S output) throws RuntimeException {}
+    public S postUpdate(T obj, R input, S output) throws RuntimeException {
+        return output;
+    }
 
     public void preDeleteById(T obj, Tid id) throws RuntimeException {}
 
