@@ -1,6 +1,7 @@
 package com.ecommerceapp.commonmodule.dto;
 
-import com.ecommerceapp.commonmodule.constant.Enums;
+import com.ecommerceapp.commonmodule.constant.APIBaseUrlConstant;
+import com.ecommerceapp.commonmodule.enums.CommonEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,6 @@ public class MailItemDTO implements Serializable {
     private Long recipientId;
     private String sendTo;
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private Enums.NotificationStatus status;
+    private CommonEnum.NotificationStatus status;
     private Timestamp createdAt;
 }

@@ -1,6 +1,7 @@
 package com.ecommerceapp.notificationservice.model;
 
-import com.ecommerceapp.commonmodule.constant.Enums;
+import com.ecommerceapp.commonmodule.constant.APIBaseUrlConstant;
+import com.ecommerceapp.commonmodule.enums.CommonEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,6 @@ public class NotificationMessage {
     private String recipientId;
     @Enumerated(EnumType.ORDINAL)
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
-    private Enums.NotificationStatus status;
+    private CommonEnum.NotificationStatus status;
     private Timestamp createdAt;
 }

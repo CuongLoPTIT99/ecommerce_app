@@ -4,7 +4,8 @@ import com.ecommerceapp.commonmodule.dto.MailItemDTO;
 import com.ecommerceapp.commonmodule.dto.NotificationMessageDTO;
 import com.ecommerceapp.commonmodule.base.service.MailService;
 import com.ecommerceapp.commonmodule.base.service.NotificationService;
-import com.ecommerceapp.commonmodule.constant.Enums;
+import com.ecommerceapp.commonmodule.constant.APIBaseUrlConstant;
+import com.ecommerceapp.commonmodule.enums.CommonEnum;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +72,7 @@ public class CustomerController {
                 .title("Test Notification")
                 .content("This is a test notification")
                 .recipientId(123L)
-                .status(Enums.NotificationStatus.PENDING)
+                .status(CommonEnum.NotificationStatus.PENDING)
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build());
         HttpHeaders headers = new HttpHeaders();
@@ -85,7 +86,7 @@ public class CustomerController {
                 .title("Test Notification")
                 .content("This is a test notification")
                 .recipientId(123L)
-                .status(Enums.NotificationStatus.PENDING)
+                .status(CommonEnum.NotificationStatus.PENDING)
                 .createdAt(new Timestamp(System.currentTimeMillis()))
                 .build());
         HttpHeaders headers = new HttpHeaders();

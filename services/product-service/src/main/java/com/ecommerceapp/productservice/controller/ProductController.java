@@ -28,7 +28,7 @@ public class ProductController {
 
     @GetMapping("/getByListId")
     public List<ProductDTO> getByListId(
-            @RequestBody List<Long> productIds
+            @RequestParam List<Long> productIds
     ) {
         return productService.getByListId(productIds);
     }
