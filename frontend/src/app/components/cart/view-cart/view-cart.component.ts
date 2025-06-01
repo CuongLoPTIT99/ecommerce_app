@@ -1,6 +1,6 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges} from '@angular/core';
 import {Button} from "primeng/button";
-import {DataViewModule} from "primeng/dataview";
+import {DataViewModule, DataViewPageEvent} from "primeng/dataview";
 import {NgClass, NgForOf} from "@angular/common";
 import {MessageService, PrimeTemplate} from "primeng/api";
 import {TagModule} from "primeng/tag";
@@ -10,7 +10,9 @@ import {FloatLabelModule} from "primeng/floatlabel";
 import {InputNumberModule} from "primeng/inputnumber";
 import {StyleClassModule} from "primeng/styleclass";
 import {CartService} from "../../../services/cart.service";
-import {PaginatorModule} from "primeng/paginator";
+import {PaginatorModule, PaginatorState} from "primeng/paginator";
+import {ToastModule} from "primeng/toast";
+import {Cart} from "../../../models/cart.model";
 
 @Component({
   selector: 'view-cart',
@@ -25,91 +27,75 @@ import {PaginatorModule} from "primeng/paginator";
     FloatLabelModule,
     InputNumberModule,
     StyleClassModule,
-    PaginatorModule
+    PaginatorModule,
+    ToastModule
   ],
   templateUrl: './view-cart.component.html',
   styleUrl: './view-cart.component.scss'
 })
 export class ViewCartComponent {
   @Output() emitCloseAction: EventEmitter<any> = new EventEmitter();
-  products: Product[] = [
-    {
-      "id": 1,
-      "name": "iPhone 16 Pro Max 256GB",
-      "brand": "iPhone",
-      "description": "iPhone 16 Pro Max 256GB",
-      "price": 799.99,
-      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/329149/iphone-16-pro-max-sa-mac-thumb-1-600x600.jpg",
+  @Output() emitCreateOrder: EventEmitter<any> = new EventEmitter();
+  products: Product[] = [];
 
-    },
-    {
-      "id": 2,
-      "name": "Samsung Galaxy S25 Edge 5G 12GB/512GB",
-      "brand": "Samsung",
-      "description": "Samsung Galaxy S25 Edge 5G 12GB/512GB",
-      "price": 1299.99,
-      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/335955/samsung-galaxy-s25-edge-blue-thumb-600x600.jpg",
+  pageSize = 5;
+  pageIndex = 0;
+  totalRecord = 0;
 
-    },
-    {
-      "id": 3,
-      "name": "Samsung Galaxy A06 5G 6GB/128GB",
-      "brand": "Samsung",
-      "description": "Samsung Galaxy A06 5G 6GB/128GB",
-      "price": 199.99,
-      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/335234/samsung-galaxy-a06-5g-black-thumbn-600x600.jpg",
-
-    },
-    {
-      "id": 4,
-      "name": "Samsung Galaxy A36 5G 12GB/256GB",
-      "brand": "Samsung",
-      "description": "Samsung Galaxy A36 5G 12GB/256GB",
-      "price": 249.99,
-      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/334930/samsung-galaxy-a36-5g-green-thumb-600x600.jpg",
-
-    },
-    {
-      "id": 34,
-      "name": "HONOR X8c 8GB/256GB",
-      "brand": "HONOR",
-      "description": "HONOR X8c 8GB/256GB",
-      "price": 499.99,
-      "imageUrl": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/335792/honor-x8c-green-thumb-638778940941716593-600x600.jpg",
-
-    },
-    {
-      "id": 35,
-      "name": "realme 14T 5G 8GB/256GB",
-      "brand": "realme",
-      "description": "realme 14T 5G 8GB/256GB",
-      "price": 899.99,
-      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/336619/realme-14t-5g-black-thumb-600x600.jpg",
-
-    }
-  ];
+  changeQuantityQueue: number[] = [];
 
   constructor(
     private messageService: MessageService,
     private productService: ProductService,
     private cartService: CartService,
   ) {
-    // this.productService.filterAndPaging('', 1, 10).subscribe({
-    //   next: (response) => {
-    //     // this.totalRecord = response?.totalElements;
-    //     this.products = response?.content;
-    //   },
-    //   error: (error) => {
-    //     this.messageService.add({ severity: 'error', summary: 'Error', detail: `Error retrieving product list: ${error}`});
-    //   }
-    // });
+    this.viewMyCart();
+  }
+
+  viewMyCart() {
+    this.cartService.viewMyCart(1, this.pageIndex, this.pageSize).subscribe({
+      next: (response) => {
+        this.totalRecord = response?.totalElements;
+        this.products = response.content;
+      }
+    });
   }
 
   removeCart(cartId: number) {
-    this.cartService.removeFromCart(cartId).subscribe();
+    this.cartService.removeFromCart(cartId).subscribe({
+      next: (response) => {
+        this.viewMyCart()
+        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product removed from cart!'});
+      },
+      error: (error) => {
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error removing product from cart'});
+      }
+    });
   }
 
-  closeDialog() {
+  buyNow(cart: Cart) {
     this.emitCloseAction.emit();
+
+    this.emitCreateOrder.emit(cart);
+  }
+
+  onPageChange(event: PaginatorState) {
+    this.pageIndex = event.page ?? 0;
+    this.viewMyCart();
+  }
+
+  onChangeQuantity(itemId: number, quantity: number) {
+    // Debounce the quantity change to avoid too many requests
+    if (this.changeQuantityQueue.length > 0) {
+      this.changeQuantityQueue.forEach(timeoutId => clearTimeout(timeoutId));
+    }
+    this.changeQuantityQueue.push(
+      setTimeout(() => {
+        this.cartService.updateCart({
+          id: itemId,
+          quantity: quantity
+        }).subscribe();
+      }, 1000)
+    );
   }
 }
