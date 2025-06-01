@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Product} from "../../../models/product.model";
 import {CartService} from "../../../services/cart.service";
 import {FormsModule} from "@angular/forms";
@@ -10,6 +10,7 @@ import {ToastModule} from "primeng/toast";
 import {AccordionModule} from "primeng/accordion";
 import {PanelModule} from "primeng/panel";
 import {ShipmentComponent} from "../../shipment/shipment.component";
+import {Order} from "../../../models/order.model";
 
 @Component({
   selector: 'create-order',
@@ -28,21 +29,18 @@ import {ShipmentComponent} from "../../shipment/shipment.component";
   templateUrl: './create-order.component.html',
   styleUrl: './create-order.component.scss'
 })
-export class CreateOrderComponent {
+export class CreateOrderComponent implements OnInit {
   @Output() emitCloseAction: EventEmitter<any> = new EventEmitter();
-
-  quantity:any = 1;
-  product: Product = {
-    id: 1,
-    name: 'Smartphone',
-    description: 'iPhone 16 Pro Max 256GB',
-    price: 799.99,
-    imageUrl: 'https://cdn.tgdd.vn/Products/Images/42/329149/iphone-16-pro-max-sa-mac-thumb-1-600x600.jpg'
-  };
+  @Input() order: Order | null = null;
+  quantity = 0;
 
   constructor(
     private cartService: CartService,
   ) {
+  }
+
+  ngOnInit() {
+    this.quantity = this.order?.quantity ?? 0;
   }
 
   onCancel() {
@@ -52,15 +50,6 @@ export class CreateOrderComponent {
   onSubmit() {
     // Handle form submission logic here
     // this.dialogActions.close();
-  }
-
-  changeQuantity() {
-    console.log('Quantity changed:', this.quantity);
-    if (this.quantity === null || this.quantity === undefined || this.quantity === '' || this.quantity < 1) {
-
-      this.quantity = 1;
-      console.log('alo:', this.quantity);
-    }
   }
 
   handleBuyNow() {

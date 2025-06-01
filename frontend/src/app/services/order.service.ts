@@ -26,10 +26,10 @@ export class OrderService extends BaseService {
     return this.doPost(`${environment.cartServiceUrl}`, order).pipe(
       tap({
         next: (response)=> {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Order created successfully!'});
+          this.messageService.add({ key: 'toastMessage', severity: 'success', summary: 'Success', detail: 'Order created successfully!'});
         },
         error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error creating order'});
+          this.messageService.add({ key: 'toastMessage', severity: 'error', summary: 'Error', detail: 'Error creating order'});
         }
       })
     );
@@ -42,10 +42,10 @@ export class OrderService extends BaseService {
     }).pipe(
       tap({
         next: (response)=> {
-          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Order cancelled successfully!'});
+          this.messageService.add({ key: 'toastMessage', severity: 'success', summary: 'Success', detail: 'Order cancelled successfully!'});
         },
         error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error cancelling order'});
+          this.messageService.add({ key: 'toastMessage', severity: 'error', summary: 'Error', detail: 'Error cancelling order'});
         }
       })
     );

@@ -97,15 +97,15 @@ export class ViewOrderComponent {
     private orderService: OrderService,
     private messageService: MessageService
   ) {
-    this.productService.filterAndPaging('', 1, 10).subscribe({
-      next: (response) => {
-        // this.totalRecord = response?.totalElements;
-        this.products = response?.content;
-      },
-      error: (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Error', detail: `Error retrieving product list: ${error}`});
-      }
-    });
+    // this.productService.filterAndPaging('', 1, 10).subscribe({
+    //   next: (response) => {
+    //     // this.totalRecord = response?.totalElements;
+    //     this.products = response?.content;
+    //   },
+    //   error: (error) => {
+    //     this.messageService.add({ key: 'toastMessage', severity: 'error', summary: 'Error', detail: `Error retrieving product list: ${error}`});
+    //   }
+    // });
   }
 
   cancelOrder(orderId: number) {

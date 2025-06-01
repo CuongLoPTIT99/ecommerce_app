@@ -1,11 +1,11 @@
 <div class="dialog-layout">
   <div class="product-image-container">
-    <img [src]="product.imageUrl" [alt]="product.name" class="dialog-product-image">
+    <img [src]="order?.product?.imageUrl" [alt]="order?.product?.name" class="dialog-product-image">
   </div>
   <div class="product-details">
     <p-floatLabel class="product-details-control">
       <p-inputNumber
-        [ngModel]="product.price"
+        [ngModel]="order?.product?.price"
         id="productPrice"
         [disabled]="true"
         mode="currency"
@@ -29,7 +29,7 @@
 
     <p-floatLabel class="product-details-control">
       <p-inputNumber
-        [ngModel]="product.price*quantity"
+        [ngModel]="(order?.product?.price ?? 0)*quantity"
         id="totalAmount"
         mode="currency"
         [disabled]="true"
