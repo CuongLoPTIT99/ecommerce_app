@@ -20,8 +20,6 @@ public class CartDTO {
     @NotNull(message = "Quantity cannot be null")
     @Min(value = 0, message = "Quantity must be greater than or equal to 0")
     private Integer quantity;
-    @NotNull(message = "Total price cannot be null")
-    @Min(value = 0, message = "Total price must be greater than or equal to 0")
     private Double totalPrice;
     private Timestamp createdAt;
     private ProductDTO product;
@@ -34,7 +32,7 @@ public class CartDTO {
         this.totalPrice = totalPrice;
     }
 
-    public CartDTO(Long id, @NotNull(message = "Customer ID cannot be null") Long customerId, @NotNull(message = "Product ID cannot be null") Long productId, @NotNull(message = "Quantity cannot be null") Integer quantity, @NotNull(message = "Total price cannot be null") Double totalPrice, Timestamp createdAt) {
+    public CartDTO(Long id, @NotNull(message = "Customer ID cannot be null") Long customerId, @NotNull(message = "Product ID cannot be null") Long productId, @NotNull(message = "Quantity cannot be null") Integer quantity, Double totalPrice, Timestamp createdAt) {
         this.id = id;
         this.customerId = customerId;
         this.productId = productId;

@@ -71,11 +71,11 @@ public class CartService extends BaseService<Cart, CartDTO, CartDTO, Long> {
 
         // set product to cartDTO
         if (!CommonUtil.isNullOrEmpty(productDTOList)) {
-            productDTOList.stream().forEach(productDTO -> {
-                Optional<CartDTO> cartDTO = cartPage.getContent().stream()
-                        .filter(c -> c.getProductId().equals(productDTO.getId())).findFirst();
-                if (cartDTO.isPresent()) {
-                    cartDTO.get().setProduct(productDTO);
+            cartPage.getContent().forEach(cartDTO -> {
+                Optional<ProductDTO> productDTO = productDTOList.stream()
+                        .filter(p -> p.getId().equals(cartDTO.getProductId())).findFirst();
+                if (productDTO.isPresent()) {
+                    cartDTO.setProduct(productDTO.get());
                 }
             });
         }

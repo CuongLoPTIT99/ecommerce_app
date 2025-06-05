@@ -19,6 +19,8 @@ public interface OrderMapper extends BaseMapper<Order, OrderDTO, OrderDTO> {
     @Mapping(source = "totalPrice", target = "totalPrice")
     @Mapping(source = "status", target = "status")
     @Mapping(source = "cancelReason", target = "cancelReason")
+    @Mapping(source = "createdAt", target = "createdAt")
+    @Mapping(source = "updatedAt", target = "updatedAt")
     OrderDTO toDTO(Order order);
 
     @Mapping(source = "id", target = "id")
@@ -27,6 +29,8 @@ public interface OrderMapper extends BaseMapper<Order, OrderDTO, OrderDTO> {
     @Mapping(source = "quantity", target = "quantity")
     @Mapping(source = "totalPrice", target = "totalPrice")
     @Mapping(source = "cancelReason", target = "cancelReason")
+    @Mapping(source = "createdAt", target = "createdAt")
+    @Mapping(source = "updatedAt", target = "updatedAt")
     Order fromDTO(OrderDTO dto);
 
     @Mapping(source = "orderId", target = "id")

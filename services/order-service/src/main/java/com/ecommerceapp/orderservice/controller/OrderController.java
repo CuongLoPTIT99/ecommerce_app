@@ -8,6 +8,7 @@ import com.ecommerceapp.orderservice.mapper.OrderMapper;
 import com.ecommerceapp.orderservice.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class OrderController {
     private final OrderService orderService;
 
@@ -90,5 +92,14 @@ public class OrderController {
             rw.setIsSuccess(false);
         }
         return ResponseEntity.ok(rw);
+    }
+
+    @GetMapping("/my-order")
+    public Page<OrderDTO> getAll(
+            @RequestParam(defaultValue = "") Long customerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        return orderService.getByCustomerIdAndPaging(customerId, page, size);
     }
 }

@@ -8,11 +8,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "order")
+@Table(name = "orders")
 public class Order implements BaseEntity<Long>, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +30,8 @@ public class Order implements BaseEntity<Long>, Serializable {
     private OrderEnums.OrderStatus status;
     @Column(name = "cancel_reason")
     private String cancelReason;
+    @Column(name = "created_at")
+    private Timestamp createdAt;
+    @Column(name = "updated_at")
+    private Timestamp updatedAt;
 }
