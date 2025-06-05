@@ -32,53 +32,59 @@
 
     <!-- User Menu -->
     <div class="user-menu">
-      <button
-        pButton
-        type="button"
-        [size]="'large'"
-        icon="pi pi-shopping-cart"
-        class="p-button-text p-button-rounded"
-        pTooltip="Cart"
-        (click)="this.visibleMyCart = true"
-      >
-      </button>
+      @if (isLoggedIn) {
+        <button
+          pButton
+          type="button"
+          [size]="'large'"
+          icon="pi pi-shopping-cart"
+          class="p-button-text p-button-rounded"
+          pTooltip="Cart"
+          (click)="this.visibleMyCart = true"
+        >
+        </button>
 
-      <button
-        pButton
-        type="button"
-        [size]="'large'"
-        icon="pi pi-shopping-bag"
-        class="p-button-text p-button-rounded"
-        pTooltip="Order"
-        (click)="this.visibleMyOrder = true"
-      >
-      </button>
+        <button
+          pButton
+          type="button"
+          [size]="'large'"
+          icon="pi pi-shopping-bag"
+          class="p-button-text p-button-rounded"
+          pTooltip="Order"
+          (click)="this.visibleMyOrder = true"
+        >
+        </button>
 
-      <button
-        pButton
-        type="button"
-        [size]="'large'"
-        icon="pi pi-bell"
-        class="p-button-text p-button-rounded"
-        pTooltip="Notification"
-      >
-      </button>
+        <button
+          pButton
+          type="button"
+          [size]="'large'"
+          icon="pi pi-bell"
+          class="p-button-text p-button-rounded"
+          pBadge
+          [value]="2"
+          badgeStyleClass="p-badge-info"
+          (click)="viewNotification($event)"
+          pTooltip="Notification"
+        >
+        </button>
 
-      <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
-      <button
-        pButton
-        type="button"
-        [size]="'large'"
-        icon="pi pi-user"
-        class="p-button-text p-button-rounded"
-        (click)="toggleUserMenu($event)" pTooltip="User info">
-      </button>
-
-      <p-button label="Sign in"
-                icon="pi pi-sign-in"
-                [rounded]="true"
-                severity="success"
-                (click)="handleLogin()"/>
+        <p-menu #userMenu [model]="userMenuItems" [popup]="true" appendTo="body"></p-menu>
+        <button
+          pButton
+          type="button"
+          [size]="'large'"
+          icon="pi pi-user"
+          class="p-button-text p-button-rounded"
+          (click)="toggleUserMenu($event)" pTooltip="User info">
+        </button>
+      } @else {
+        <p-button label="Sign in"
+                  icon="pi pi-sign-in"
+                  [rounded]="true"
+                  severity="success"
+                  (click)="login()"/>
+      }
     </div>
   </div>
 </header>
@@ -91,14 +97,68 @@
   }
 </p-dialog>
 
-<p-dialog [header]="order2Buy?.product?.name" [modal]="true" [(visible)]="visibleCreateOrder" [style]="{ width: '40rem', height: '41rem' }">
+<p-dialog header="Create order" [modal]="true" [(visible)]="visibleCreateOrder" [style]="{ width: '43rem', height: '45rem' }">
   @if (visibleCreateOrder) {
     <create-order [order]="order2Buy" (emitCloseAction)="closeCreateOrderDialog()"></create-order>
   }
 </p-dialog>
 
-<p-dialog header="My order" [modal]="true" [(visible)]="visibleMyOrder" [style]="{ width: '40rem', height: '41rem' }">
-  @if (visibleMyOrder) {
-    <view-order (emitCloseAction)="closeViewMyOrderDialog()"></view-order>
+<p-dialog header="View order" [modal]="true" [(visible)]="visibleViewOrder" [style]="{ width: '43rem', height: '45rem' }">
+  @if (visibleViewOrder) {
+    <create-order [order]="order2Buy" type="view" (emitCloseAction)="closeViewOrderDialog()"></create-order>
   }
 </p-dialog>
+
+<p-dialog header="My order" [modal]="true" [(visible)]="visibleMyOrder" [style]="{ width: '40rem', height: '41rem' }">
+  @if (visibleMyOrder) {
+    <view-order (emitViewOrder)="openViewOrder($event)"
+                (emitCloseAction)="closeViewMyOrderDialog()"
+    ></view-order>
+  }
+</p-dialog>
+
+<p-overlayPanel #notificationPanel [style]="{ width: '450px'}" [scrollTop]="0" [showCloseIcon]="true">
+  <ng-template pTemplate="content">
+    <p-dataView #dv [value]="products" [rows]="5" [paginator]="true">
+      <ng-template pTemplate="list" let-products>
+        <div class="grid grid-nogutter">
+          <div class="col-12" *ngFor="let item of products; let first = first">
+            <div class="flex flex-column sm:flex-row sm:align-items-center p-2 gap-3" [ngClass]="{ 'border-top-1 surface-border': !first }">
+              <div class="md:w-5rem relative">
+                <img class="block xl:block mx-auto border-round w-full" [src]="item.imageUrl" [alt]="item.name" />
+                <p-tag [value]="item.inventoryStatus" [severity]="'success'" class="absolute" [style.left.px]="4" [style.top.px]="4" />
+              </div>
+              <div class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-2">
+                <div class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
+                  <div>
+                    <p-tag [value]="item.brand" [style]="{'margin-bottom': '5px'}"></p-tag>
+                    <p-tag [value]="item.name" severity="info"></p-tag>
+                  </div>
+                </div>
+                <div class="flex flex-column md:align-items-end gap-2 w-12">
+                  <div class="flex flex-row md:align-items-center justify-content-between gap-1">
+                    <div class="flex flex-row md:flex-row md:align-items-center" [style]="{'padding-right': '10px'}">
+                      <label class="mr-1 h-full font-medium text-secondary text-sm" for="quantity">Quantity</label>
+                      <p-inputNumber
+                        [min]="1"
+                        [size]="3"
+                        [disabled]="true"
+                        class="quantity-value"
+                        [showButtons]="true"
+                        inputId="horizontal"
+                        id="quantity"
+                      />
+                    </div>
+                    <div class="flex flex-row w-7rem">
+                      <span class="text-lg font-semibold text-900 w-full">{{ '$' + item.price }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-dataView>
+  </ng-template>
+</p-overlayPanel>

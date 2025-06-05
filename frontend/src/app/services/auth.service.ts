@@ -12,14 +12,8 @@ import SockJS from "sockjs-client";
 export class AuthService {
 
   constructor(
-    // private oidcSecurityService: OidcSecurityService,
     private http: HttpClient
   ) {
-    // Check authentication state when the service is initialized
-    // this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated }) => {
-    //   console.log('User is authenticated:', isAuthenticated);
-    // });
-
   }
 
   /** Start the login flow */
@@ -46,7 +40,7 @@ export class AuthService {
     );
   }
 
-  checkLoginStatus(): Observable<any> {
+  isLoggedIn(): Observable<any> {
     return this.http.post(`${environment.apiGatewayUrl}/api/v1/customer/token`, {},
       {
         withCredentials: true
@@ -69,42 +63,4 @@ export class AuthService {
       })
     );
   }
-
-  getUserInfo(): any {
-    this.http.post(`${environment.apiGatewayUrl}/customer/notification`,
-      {}
-    ).subscribe((res) => {
-      console.log(res);
-      return res;
-    });
-  }
-
-  getUserInfo1(): any {
-    this.http.post(`${environment.apiGatewayUrl}/customer/mail`,
-      {}
-    ).subscribe((res) => {
-      console.log(res);
-      return res;
-    });
-  }
-
-  checkLoginStatus1(): Observable<any> {
-    return this.http.get(`${environment.apiGatewayUrl}/auth/status`,
-      {
-        withCredentials: true
-      }
-    );
-  }
-
-  // /** Get the refresh token */
-  // getRefreshToken(): Observable<string | null> {
-  //   return this.http.get<{ access_token: string }>(`${environment.apiGatewayUrl}/auth/refresh-token`).pipe(
-  //     map(response => response.access_token)
-  //   );
-  // }
-  //
-  // /** Get the user profile information */
-  // getUserData(): Observable<any> {
-  //   return this.oidcSecurityService.userData$;
-  // }
 }

@@ -25,6 +25,12 @@ import {ViewCartComponent} from "../../components/cart/view-cart/view-cart.compo
 import {ToastModule} from "primeng/toast";
 import {Cart} from "../../models/cart.model";
 import {Order} from "../../models/order.model";
+import {BadgeModule} from "primeng/badge";
+import {OverlayPanel, OverlayPanelModule} from "primeng/overlaypanel";
+import {DataViewModule} from "primeng/dataview";
+import {InputNumberModule} from "primeng/inputnumber";
+import {TagModule} from "primeng/tag";
+import {Product} from "../../models/product.model";
 
 @Component({
   selector: 'app-header',
@@ -48,7 +54,12 @@ import {Order} from "../../models/order.model";
     DialogModule,
     ViewOrderComponent,
     ViewCartComponent,
-    ToastModule
+    ToastModule,
+    BadgeModule,
+    OverlayPanelModule,
+    DataViewModule,
+    InputNumberModule,
+    TagModule
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -57,24 +68,88 @@ export class HeaderComponent {
   @Output() menuToggled = new EventEmitter<void>();
   @Output() emitToggleSidebar = new EventEmitter<void>();
   @ViewChild('userMenu') menu!: Menu;
+  @ViewChild('notificationPanel') notificationPanel!: OverlayPanel;
 
   searchQuery = '';
-  cartCount = 3;
-  wishlistCount = 5;
+  isLoggedIn = true;
 
   visibleMyCart = false;
   visibleCreateOrder = false;
+  visibleViewOrder = false;
   visibleMyOrder = false;
 
-  order2Buy: Order | null = null;
+  order2Buy: Order = {};
+
+  products: Product[] = [
+    {
+      "id": 1,
+      "name": "iPhone 16 Pro Max 256GB",
+      "brand": "iPhone",
+      "description": "iPhone 16 Pro Max 256GB",
+      "price": 799.99,
+      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/329149/iphone-16-pro-max-sa-mac-thumb-1-600x600.jpg",
+
+    },
+    {
+      "id": 2,
+      "name": "Samsung Galaxy S25 Edge 5G 12GB/512GB",
+      "brand": "Samsung",
+      "description": "Samsung Galaxy S25 Edge 5G 12GB/512GB",
+      "price": 1299.99,
+      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/335955/samsung-galaxy-s25-edge-blue-thumb-600x600.jpg",
+
+    },
+    {
+      "id": 3,
+      "name": "Samsung Galaxy A06 5G 6GB/128GB",
+      "brand": "Samsung",
+      "description": "Samsung Galaxy A06 5G 6GB/128GB",
+      "price": 199.99,
+      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/335234/samsung-galaxy-a06-5g-black-thumbn-600x600.jpg",
+
+    },
+    {
+      "id": 4,
+      "name": "Samsung Galaxy A36 5G 12GB/256GB",
+      "brand": "Samsung",
+      "description": "Samsung Galaxy A36 5G 12GB/256GB",
+      "price": 249.99,
+      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/334930/samsung-galaxy-a36-5g-green-thumb-600x600.jpg",
+
+    },
+    {
+      "id": 34,
+      "name": "HONOR X8c 8GB/256GB",
+      "brand": "HONOR",
+      "description": "HONOR X8c 8GB/256GB",
+      "price": 499.99,
+      "imageUrl": "https://cdnv2.tgdd.vn/mwg-static/tgdd/Products/Images/42/335792/honor-x8c-green-thumb-638778940941716593-600x600.jpg",
+
+    },
+    {
+      "id": 35,
+      "name": "realme 14T 5G 8GB/256GB",
+      "brand": "realme",
+      "description": "realme 14T 5G 8GB/256GB",
+      "price": 899.99,
+      "imageUrl": "https://cdn.tgdd.vn/Products/Images/42/336619/realme-14t-5g-black-thumb-600x600.jpg",
+
+    }
+  ];
 
   constructor(
-    private router: Router,
-    private httpClient: HttpClient,
     private authService: AuthService,
-    private notificationService: NotificationService,
     private realtimeService: RealtimeService
   ) {
+    // this.authService.isLoggedIn().subscribe({
+    //   next: (response) => {
+    //     this.isLoggedIn = response?.isLoggedIn ?? false;
+    //   },
+    //   error: (error) => {
+    //     console.error('Error checking login status', error);
+    //     this.isLoggedIn = false;
+    //   }
+    // });
     this.realtimeService.subscribeRealtimeData('notification', this.handleRealtimeData);
   }
 
@@ -83,16 +158,6 @@ export class HeaderComponent {
       label: 'My Account',
       icon: 'pi pi-user',
       routerLink: '/account'
-    },
-    {
-      label: 'My Orders',
-      icon: 'pi pi-shopping-bag',
-      routerLink: '/orders'
-    },
-    {
-      label: 'Wishlist',
-      icon: 'pi pi-heart',
-      routerLink: '/wishlist'
     },
     {
       separator: true
@@ -105,14 +170,9 @@ export class HeaderComponent {
     {
       label: 'Logout',
       icon: 'pi pi-sign-out',
-      command: () => this.logout()
+      command: () => this.authService.logout()
     }
   ];
-
-  logout() {
-    // Implement logout logic
-    console.log('Logging out...');
-  }
 
   toggleUserMenu(event: MouseEvent){
     this.menu.toggle(event);
@@ -126,16 +186,8 @@ export class HeaderComponent {
     }, 0);
   }
 
-  handleLogin(){
-    // this.menu.toggle(event);
-    // setTimeout(() => {
-    //   const menuEl = document.querySelector('.p-menu.p-menu-overlay') as HTMLElement;
-    //   if (menuEl) {
-    //     menuEl.style.position = 'fixed';
-    //     menuEl.style.top = '46px';
-    //     menuEl.style.right = '40px';
-    //   }
-    // }, 0);
+  login(){
+    this.authService.login();
   }
 
   handleRealtimeData = () => {
@@ -146,41 +198,31 @@ export class HeaderComponent {
     this.emitToggleSidebar.emit();
   }
 
-  redirect2Login(): void {
-    this.authService.logout().subscribe();
-    // if (ACCESS_)
-    // this.httpClient.get(
-    //   environment.apiGatewayUrl + '/api/v1/customer/getById/1',
-    //   {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Access-Control-Allow-Origin': '*',
-    //       'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-    //       'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Origin, Access-Control-Allow-Methods'
-    //     }
-    //   }
-    // ).subscribe((res) => {
-    //   console.log(res);
-    // });
-    //console.log('redirect2Login', this.authService.getAccessToken());
-  }
-
-  redirect2Login1(): void {
-    this.authService.checkLoginStatus().subscribe((res) => {
-      console.log('redirect2Login',res);
-    })
-  }
-
   openCreateOrder(cart: Cart) {
     this.order2Buy = {
       product: cart.product,
-      quantity: cart.quantity
+      quantity: cart.quantity,
+      totalPrice: (cart?.product?.price ?? 0) * (cart.quantity ?? 0)
     }
     this.visibleCreateOrder= true;
   }
 
+  openViewOrder(order: Order) {
+    this.order2Buy = order;
+    this.visibleViewOrder= true;
+  }
+
+  viewNotification(event: Event) {
+    this.notificationPanel.toggle(event);
+    setTimeout(() => {
+      const notificationEl = document.querySelector('.p-overlaypanel') as HTMLElement;
+      if (notificationEl) {
+        notificationEl.style.position = 'fixed';
+      }
+    }, 0);
+  }
+
   closeViewMyCartDialog() {
-    console.log('closeViewMyCartDialog');
     this.visibleMyCart = false;
   }
 
@@ -188,12 +230,11 @@ export class HeaderComponent {
     this.visibleCreateOrder = false;
   }
 
+  closeViewOrderDialog() {
+    this.visibleViewOrder = false;
+  }
+
   closeViewMyOrderDialog() {
     this.visibleMyOrder = false;
   }
-
-
-
-
-  protected readonly environment = environment;
 }
