@@ -36,7 +36,7 @@ import {Cart} from "../../../models/cart.model";
 export class ViewCartComponent {
   @Output() emitCloseAction: EventEmitter<any> = new EventEmitter();
   @Output() emitCreateOrder: EventEmitter<any> = new EventEmitter();
-  products: Product[] = [];
+  cartItems: Cart[] = [];
 
   pageSize = 5;
   pageIndex = 0;
@@ -46,7 +46,6 @@ export class ViewCartComponent {
 
   constructor(
     private messageService: MessageService,
-    private productService: ProductService,
     private cartService: CartService,
   ) {
     this.viewMyCart();
@@ -56,7 +55,7 @@ export class ViewCartComponent {
     this.cartService.viewMyCart(1, this.pageIndex, this.pageSize).subscribe({
       next: (response) => {
         this.totalRecord = response?.totalElements;
-        this.products = response.content;
+        this.cartItems = response.content;
       }
     });
   }
@@ -64,8 +63,12 @@ export class ViewCartComponent {
   removeCart(cartId: number) {
     this.cartService.removeFromCart(cartId).subscribe({
       next: (response) => {
-        this.viewMyCart()
-        this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product removed from cart!'});
+        if (response?.isSuccess) {
+          this.viewMyCart()
+          this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Product removed from cart!'});
+        } else {
+          this.messageService.add({ severity: 'error', summary: 'Error', detail: response?.message});
+        }
       },
       error: (error) => {
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error removing product from cart'});

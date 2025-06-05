@@ -1,18 +1,18 @@
 <div class="card">
-  <p-dataView #dv [value]="products" [rows]="5" [paginator]="true">
-    <ng-template pTemplate="list" let-products>
+  <p-dataView #dv [value]="orders" [rows]="5" [paginator]="false">
+    <ng-template pTemplate="list" let-orders>
       <div class="grid grid-nogutter">
-        <div class="col-12" *ngFor="let item of products; let first = first">
+        <div class="col-12" *ngFor="let item of orders; let first = first">
           <div class="flex flex-column sm:flex-row sm:align-items-center p-2 gap-3" [ngClass]="{ 'border-top-1 surface-border': !first }">
             <div class="md:w-5rem relative">
-              <img class="block xl:block mx-auto border-round w-full" [src]="item.imageUrl" [alt]="item.name" />
+              <img class="block xl:block mx-auto border-round w-full" [src]="item.product.imageUrl" [alt]="item.product.name" />
               <p-tag [value]="item.inventoryStatus" [severity]="'success'" class="absolute" [style.left.px]="4" [style.top.px]="4" />
             </div>
             <div class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-2">
               <div class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
                 <div>
-                  <p-tag [value]="item.brand" [style]="{'margin-bottom': '5px'}"></p-tag>
-                  <p-tag [value]="item.name" severity="info"></p-tag>
+                  <p-tag [value]="item.product.brand" [style]="{'margin-bottom': '5px'}"></p-tag>
+                  <p-tag [value]="item.product.name" severity="info"></p-tag>
                 </div>
               </div>
               <div class="flex flex-column md:align-items-end gap-2 w-12">
@@ -27,10 +27,11 @@
                       [showButtons]="true"
                       inputId="horizontal"
                       id="quantity"
+                      [ngModel]="item.quantity"
                     />
                   </div>
                   <div class="flex flex-row w-7rem">
-                    <span class="text-lg font-semibold text-900 w-full">{{ '$' + item.price }}</span>
+                    <span class="text-lg font-semibold text-900 w-full">{{ '$' + item.totalPrice }}</span>
                   </div>
                 </div>
                 <div class="flex flex-row-reverse md:flex-row gap-2">
@@ -39,7 +40,7 @@
                             severity="danger"
                             class="flex-auto md:flex-initial white-space-nowrap"
                             label="Cancel"
-                            (click)="cancelOrder(item.id)"
+                            (click)="confirmCancelOrder($event, item.id)"
                   />
                   <p-button icon="pi pi-eye"
                             [size]="'small'"
@@ -47,6 +48,7 @@
                             class="flex-auto md:flex-initial white-space-nowrap"
                             label="View detail"
                             [disabled]="item.inventoryStatus === 'OUTOFSTOCK'"
+                            (click)="viewOrder(item)"
                   />
                 </div>
               </div>
@@ -56,4 +58,10 @@
       </div>
     </ng-template>
   </p-dataView>
+  <p-paginator
+    (onPageChange)="onPageChange($event)"
+    [first]="0"
+    [rows]="pageSize"
+    [totalRecords]="totalRecord"/>
 </div>
+<p-confirmDialog/>

@@ -1,8 +1,8 @@
 <div class="card">
-  <p-dataView #dv [value]="products" [paginator]="false">
-    <ng-template pTemplate="list" let-products>
+  <p-dataView #dv [value]="cartItems" [paginator]="false">
+    <ng-template pTemplate="list" let-cartItems>
       <div class="grid grid-nogutter">
-        <div class="col-12" *ngFor="let item of products; let first = first">
+        <div class="col-12" *ngFor="let item of cartItems; let first = first">
           <div class="flex flex-column sm:flex-row sm:align-items-center p-2 gap-3" [ngClass]="{ 'border-top-1 surface-border': !first }">
             <div class="md:w-5rem relative">
               <img class="block xl:block mx-auto border-round w-full" [src]="item.product.imageUrl" [alt]="item.name" />

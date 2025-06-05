@@ -14,6 +14,7 @@ import {Observable, tap} from "rxjs";
   providedIn: 'root'
 })
 export class OrderService extends BaseService {
+  baseUrl = environment.orderServiceUrl;
 
   constructor(
     http: HttpClient,
@@ -22,32 +23,22 @@ export class OrderService extends BaseService {
     super(http);
   }
 
+  viewMyOrder(customerId: number, page?: number, size?: number): Observable<any> {
+    return this.doGet(`${this.baseUrl}/my-order?customerId=${customerId}&page=${page}&size=${size}`);
+  }
+
   createOrder(order: Order): Observable<any> {
-    return this.doPost(`${environment.cartServiceUrl}`, order).pipe(
-      tap({
-        next: (response)=> {
-          this.messageService.add({ key: 'toastMessage', severity: 'success', summary: 'Success', detail: 'Order created successfully!'});
-        },
-        error: (error) => {
-          this.messageService.add({ key: 'toastMessage', severity: 'error', summary: 'Error', detail: 'Error creating order'});
-        }
-      })
-    );
+    return this.doPost(`${this.baseUrl}`, order);
+  }
+
+  updateOrder(order: Order): Observable<any> {
+    return this.doPut(`${this.baseUrl}`, order);
   }
 
   cancelOrder(orderId: number, cancelReason: string): Observable<any> {
-    return this.doPost(`${environment.cartServiceUrl}/cancel`, {
+    return this.doPost(`${this.baseUrl}/cancel`, {
       orderId: orderId,
       cancelReason: cancelReason
-    }).pipe(
-      tap({
-        next: (response)=> {
-          this.messageService.add({ key: 'toastMessage', severity: 'success', summary: 'Success', detail: 'Order cancelled successfully!'});
-        },
-        error: (error) => {
-          this.messageService.add({ key: 'toastMessage', severity: 'error', summary: 'Error', detail: 'Error cancelling order'});
-        }
-      })
-    );
+    });
   }
 }

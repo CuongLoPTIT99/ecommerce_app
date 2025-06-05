@@ -1,12 +1,17 @@
-<div class="dialog-layout">
+<div class="dialog-layout mb-3">
   <div class="product-image-container">
     <img [src]="order?.product?.imageUrl" [alt]="order?.product?.name" class="dialog-product-image">
   </div>
   <div class="product-details">
+    <div class="flex flex-row md:flex-column justify-content-between align-items-start">
+      <p-tag [value]="order?.product?.brand ?? ''" class="mb-3"></p-tag>
+      <p-tag [value]="order?.product?.name ?? ''" severity="info"></p-tag>
+    </div>
     <p-floatLabel class="product-details-control">
       <p-inputNumber
-        [ngModel]="order?.product?.price"
+        [ngModel]="order?.product?.price ?? 0"
         id="productPrice"
+        size="23"
         [disabled]="true"
         mode="currency"
         currency="USD"
@@ -17,8 +22,11 @@
 
     <p-floatLabel class="product-details-control">
       <p-inputNumber
-        [(ngModel)]="quantity"
+        [(ngModel)]="order.quantity"
+        (ngModelChange)="changeQuantity()"
+        size="23"
         [min]="1"
+        [disabled]="type === 'view'"
         class="quantity-value"
         [showButtons]="true"
         inputId="horizontal"
@@ -29,9 +37,10 @@
 
     <p-floatLabel class="product-details-control">
       <p-inputNumber
-        [ngModel]="(order?.product?.price ?? 0)*quantity"
+        [ngModel]="order.totalPrice"
         id="totalAmount"
         mode="currency"
+        size="23"
         [disabled]="true"
         [inputStyle]="{'color': 'red'}"
         currency="USD"
@@ -41,10 +50,14 @@
   </div>
 </div>
 <p-panel header="Shipment">
-  <shipment/>
+  <shipment [shipment]="order.shipment ?? {}"/>
 </p-panel>
-<div class="flex gap-2" [style]="{'position': 'absolute', 'bottom': '1rem', 'right': '1rem'}">
-  <p-button label="Cancel" [rounded]="true" icon="pi pi-times-circle" severity="danger" (click)="onCancel()"/>
-  <p-button label="Buy now" [rounded]="true" icon="pi pi-shopping-bag" severity="success" (click)="handleBuyNow()"/>
+<div class="flex gap-2" [style]="{'position': 'absolute', 'bottom': '1.5rem', 'right': '1.5rem'}">
+  @if (type === 'create') {
+    <p-button label="Buy now" [size]="'small'" icon="pi pi-shopping-bag" (click)="buyNow()"/>
+  } @else {
+    <p-button label="Cancel order" [size]="'small'" icon="pi pi-times-circle" severity="danger" (click)="onCancel()"/>
+    <p-button label="Save" [size]="'small'" icon="pi pi-save" (click)="saveOrder()"/>
+  }
 </div>
 

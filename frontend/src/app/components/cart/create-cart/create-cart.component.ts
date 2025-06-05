@@ -25,6 +25,8 @@ import {ToastModule} from "primeng/toast";
 export class CreateCartComponent {
   @Output() emitCloseAction: EventEmitter<any> = new EventEmitter();
 
+
+
   quantity:any = 1;
   product: Product = {
     id: 1,
